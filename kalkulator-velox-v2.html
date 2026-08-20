@@ -42,16 +42,17 @@
         
         .subtotal-text { font-weight: bold; color: #1f2937; white-space: nowrap; text-align: right; }
         .modal-col { background-color: #fef2f2; }
-        .no-col { width: 40px; text-align: center; font-weight: bold; color: #6b7280; }
-        
+        .no-col { width: 46px; text-align: center; font-weight: bold; color: #6b7280; }
+        .no-col-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .no-col-wrap .row-number { line-height: 1.2; }
+
         .btn-add { background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; display: block; margin-top: 5px; }
         .btn-add:hover { background: #dbeafe; }
         .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
 
-        .aksi-group { display: flex; flex-direction: column; gap: 4px; min-width: 110px; }
-        .aksi-row { display: flex; gap: 4px; }
-        .aksi-row button { flex: 1; padding: 6px 4px; font-size: 12px; }
-        .btn-move { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .aksi-group { display: flex; flex-direction: column; gap: 4px; min-width: 80px; }
+        .aksi-group button { width: 100%; padding: 6px; font-size: 12px; }
+        .btn-move { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 4px; font-weight: bold; cursor: pointer; width: 22px; height: 18px; padding: 0; font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .btn-move:hover:not(:disabled) { background: #e5e7eb; }
         .btn-move:disabled { opacity: 0.35; cursor: not-allowed; }
         .btn-duplikat { background: #dbeafe; color: #1d4ed8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
@@ -670,7 +671,13 @@
         }
 
         tr.innerHTML = `
-            <td class="no-col row-number"></td>
+            <td class="no-col">
+                <div class="no-col-wrap">
+                    <button class="btn-move" type="button" data-arah="up" onclick="pindahBaris(this, 'up')" title="Pindah baris ke atas">&#9650;</button>
+                    <span class="row-number"></span>
+                    <button class="btn-move" type="button" data-arah="down" onclick="pindahBaris(this, 'down')" title="Pindah baris ke bawah">&#9660;</button>
+                </div>
+            </td>
             <td><input type="text" class="input-uraian" value="${escapeHtml(nama)}" oninput="validasiUraian(this); simpanDanHitung()" onblur="validasiUraian(this)"></td>
             <td><input type="number" class="qty" min="0" value="${escapeHtml(qty)}" oninput="validasiQty(this); simpanDanHitung()"></td>
             <td>
@@ -684,14 +691,8 @@
             <td class="subtotal-text">Rp 0</td>
             <td>
                 <div class="aksi-group">
-                    <div class="aksi-row">
-                        <button class="btn-move" type="button" data-arah="up" onclick="pindahBaris(this, 'up')" title="Pindah baris ke atas">&#9650;</button>
-                        <button class="btn-move" type="button" data-arah="down" onclick="pindahBaris(this, 'down')" title="Pindah baris ke bawah">&#9660;</button>
-                    </div>
-                    <div class="aksi-row">
-                        <button class="btn-duplikat" type="button" onclick="duplikatBaris(this)" title="Duplikat baris ini">Duplikat</button>
-                        <button class="btn-delete" type="button" onclick="this.closest('tr').remove(); updateNomorUrut(); simpanDanHitung();" title="Hapus baris ini">Hapus</button>
-                    </div>
+                    <button class="btn-duplikat" type="button" onclick="duplikatBaris(this)" title="Duplikat baris ini">Duplikat</button>
+                    <button class="btn-delete" type="button" onclick="this.closest('tr').remove(); updateNomorUrut(); simpanDanHitung();" title="Hapus baris ini">Hapus</button>
                 </div>
             </td>`;
 
