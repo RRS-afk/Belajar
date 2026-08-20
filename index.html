@@ -129,26 +129,33 @@
     <!-- PENGATURAN MARGIN, PAJAK & DISKON (Disembunyikan saat print) -->
     <div class="card no-print" style="background-color: #e0f2fe; border: 1px solid #bae6fd;">
         <h3 style="color: #0369a1; border-color: #bae6fd;">Pengaturan Margin, Pajak & Diskon</h3>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-            <div style="flex: 1; min-width: 140px;">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+            <div style="flex: 1; min-width: 130px;">
                 <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Biaya Tak Terduga (%)</label>
                 <input type="number" id="persen-contingency" value="3" oninput="simpanDanHitung()">
             </div>
-            <div style="flex: 1; min-width: 140px;">
+            <div style="flex: 1; min-width: 130px;">
                 <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Target Keuntungan (%)</label>
                 <input type="number" id="persen-profit" value="15" oninput="simpanDanHitung()">
             </div>
-            <div style="flex: 1; min-width: 140px;">
-                <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Diskon Proyek (Rp)</label>
-                <input type="text" id="input-diskon" value="0" oninput="formatInputRupiahDiskon(this)">
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Tipe Diskon</label>
+                <select id="tipe-diskon" onchange="gantiTipeDiskon()" style="padding: 8px;">
+                    <option value="rp">Nominal (Rp)</option>
+                    <option value="percent">Persen (%)</option>
+                </select>
             </div>
-            <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+            <div style="flex: 1; min-width: 130px;">
+                <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Nilai Diskon</label>
+                <input type="text" id="input-diskon" value="0" oninput="handleDiskonInput(this)">
+            </div>
+            <div style="flex: 1.2; min-width: 180px; display: flex; align-items: center; gap: 10px; padding-bottom: 5px;">
                 <input type="checkbox" id="check-pajak" checked onchange="simpanDanHitung()" style="width: 20px; height: 20px; cursor: pointer;">
                 <label for="check-pajak" style="font-size: 13px; font-weight: bold; color: #0369a1; cursor: pointer; margin: 0;">Gunakan Pajak PPN (11%)</label>
             </div>
         </div>
         <p style="font-size: 12px; color: #0369a1; margin-top: 10px; margin-bottom: 0;">
-            <em>*Biaya tak terduga & profit langsung mendongkrak harga satuan. Diskon akan memotong total akhir penawaran.</em>
+            <em>*Diskon dapat dipilih menggunakan nominal Rupiah (Rp) atau Persen (%) untuk memotong total penawaran harga.</em>
         </p>
     </div>
 
@@ -185,7 +192,7 @@
         </div>
 
         <div class="flex-row" id="row-diskon" style="color: #f87171;">
-            <span>Diskon Proyek:</span><span id="rek-diskon">- Rp 0</span>
+            <span id="label-diskon-teks">Diskon Proyek:</span><span id="rek-diskon">- Rp 0</span>
         </div>
 
         <div class="flex-row" id="row-pajak">
@@ -233,12 +240,29 @@
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
     function getAngka(inputVal) { return parseFloat(inputVal.toString().replace(/[^0-9]/g, '')) || 0; }
 
-    function formatInputRupiahDiskon(input) {
-        let val = input.value.replace(/[^0-9]/g, '');
-        if (val !== "") {
-            input.value = new Intl.NumberFormat('id-ID').format(val);
+    function gantiTipeDiskon() {
+        const tipe = document.getElementById('tipe-diskon').value;
+        const inputDiskon = document.getElementById('input-diskon');
+        if(tipe === 'percent') {
+            inputDiskon.value = parseFloat(inputDiskon.value.replace(/[^0-9.]/g, '')) || 0;
         } else {
-            input.value = "0";
+            let val = getAngka(inputDiskon.value);
+            inputDiskon.value = new Intl.NumberFormat('id-ID').format(val);
+        }
+        simpanDanHitung();
+    }
+
+    function handleDiskonInput(input) {
+        const tipe = document.getElementById('tipe-diskon').value;
+        if(tipe === 'percent') {
+            input.value = input.value.replace(/[^0-9.]/g, '');
+        } else {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val !== "") {
+                input.value = new Intl.NumberFormat('id-ID').format(val);
+            } else {
+                input.value = "0";
+            }
         }
         simpanDanHitung();
     }
@@ -265,11 +289,12 @@
             pengaturan: {
                 contingency: document.getElementById('persen-contingency').value,
                 profit: document.getElementById('persen-profit').value,
+                tipeDiskon: document.getElementById('tipe-diskon').value,
                 diskon: document.getElementById('input-diskon').value,
                 usePajak: document.getElementById('check-pajak').checked
             }
         };
-        localStorage.setItem('dataRABVeloxV13', JSON.stringify(data));
+        localStorage.setItem('dataRABVeloxV14', JSON.stringify(data));
         
         const status = document.getElementById('status-simpan');
         status.style.display = 'block';
@@ -365,7 +390,10 @@
     function hitungSemua() {
         const pContingency = parseFloat(document.getElementById('persen-contingency').value) || 0;
         const pProfit = parseFloat(document.getElementById('persen-profit').value) || 0;
-        const nilaiDiskon = getAngka(document.getElementById('input-diskon').value);
+        const tipeDiskon = document.getElementById('tipe-diskon').value;
+        const rawDiskonInput = document.getElementById('input-diskon').value;
+        const valDiskonInput = parseFloat(rawDiskonInput.toString().replace(/[^0-9.]/g, '')) || 0;
+        
         const usePajak = document.getElementById('check-pajak').checked;
         const pPajak = usePajak ? 11 : 0;
         
@@ -393,22 +421,31 @@
             row.querySelector('.subtotal-text').innerText = formatRupiah(subtotalJual);
         });
 
-        // Subtotal setelah dipotong diskon
-        let subtotalSetelahDiskon = totalPenawaranKeseluruhan - nilaiDiskon;
+        // Hitung nominal diskon berdasarkan tipe (Rp atau %)
+        let nilaiDiskonRupiah = 0;
+        if(tipeDiskon === 'percent') {
+            nilaiDiskonRupiah = totalPenawaranKeseluruhan * (valDiskonInput / 100);
+            document.getElementById('label-diskon-teks').innerText = `Diskon Proyek (${valDiskonInput}%):`;
+        } else {
+            nilaiDiskonRupiah = valDiskonInput;
+            document.getElementById('label-diskon-teks').innerText = "Diskon Proyek:";
+        }
+
+        let subtotalSetelahDiskon = totalPenawaranKeseluruhan - nilaiDiskonRupiah;
         if(subtotalSetelahDiskon < 0) subtotalSetelahDiskon = 0;
 
         const nilaiPajak = subtotalSetelahDiskon * (pPajak / 100);
         const grandTotal = subtotalSetelahDiskon + nilaiPajak;
-        const totalKeuntunganBersih = totalPenawaranKeseluruhan - totalModalKeseluruhan - nilaiDiskon;
+        const totalKeuntunganBersih = totalPenawaranKeseluruhan - totalModalKeseluruhan - nilaiDiskonRupiah;
 
         document.getElementById('rek-modal').innerText = formatRupiah(totalModalKeseluruhan);
         document.getElementById('rek-markup').innerText = formatRupiah(totalKeuntunganBersih);
         document.getElementById('print-subtotal').innerText = formatRupiah(totalPenawaranKeseluruhan);
         
         const rowDiskon = document.getElementById('row-diskon');
-        if (nilaiDiskon > 0) {
+        if (nilaiDiskonRupiah > 0) {
             rowDiskon.style.display = 'flex';
-            document.getElementById('rek-diskon').innerText = "- " + formatRupiah(nilaiDiskon);
+            document.getElementById('rek-diskon').innerText = "- " + formatRupiah(nilaiDiskonRupiah);
         } else {
             rowDiskon.style.display = 'none';
         }
@@ -425,7 +462,7 @@
     }
 
     window.onload = () => {
-        const data = JSON.parse(localStorage.getItem('dataRABVeloxV13'));
+        const data = JSON.parse(localStorage.getItem('dataRABVeloxV14'));
         if(data) {
             if(data.pelanggan) {
                 document.getElementById('cust-nama').value = data.pelanggan.nama || '';
@@ -437,6 +474,9 @@
             if(data.pengaturan) {
                 document.getElementById('persen-contingency').value = data.pengaturan.contingency !== undefined ? data.pengaturan.contingency : 3;
                 document.getElementById('persen-profit').value = data.pengaturan.profit !== undefined ? data.pengaturan.profit : 15;
+                if(data.pengaturan.tipeDiskon) {
+                    document.getElementById('tipe-diskon').value = data.pengaturan.tipeDiskon;
+                }
                 document.getElementById('input-diskon').value = data.pengaturan.diskon !== undefined ? data.pengaturan.diskon : "0";
                 if(data.pengaturan.usePajak !== undefined) {
                     document.getElementById('check-pajak').checked = data.pengaturan.usePajak;
@@ -467,7 +507,7 @@
 
     function resetData() { 
         if(confirm("Anda yakin ingin menghapus semua data?")) { 
-            localStorage.removeItem('dataRABVeloxV13'); 
+            localStorage.removeItem('dataRABVeloxV14'); 
             location.reload(); 
         } 
     }
