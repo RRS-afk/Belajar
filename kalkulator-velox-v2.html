@@ -781,7 +781,7 @@
             fragment.appendChild(buatElemenBaris(tipe));
         } else {
             dataArray.forEach(r => {
-                fragment.appendChild(buatElemenBaris(tipe, r.nama, r.qty, r.satuanType || r.satuan, r.satuanCustom, r.modal));
+                fragment.appendChild(buatElemenBaris(tipe, r.nama, r.qty, r.satuan || r.satuanType, r.satuanCustom, r.modal));
             });
         }
         tbody.appendChild(fragment);
