@@ -144,7 +144,7 @@
             <button type="button" class="btn-proyek btn-proyek-hapus" onclick="hapusProyekTerpilih()">Hapus</button>
         </div>
         <p style="font-size: 12px; color: #92400e; margin-top: 10px; margin-bottom: 0;">
-            Proyek aktif saat ini: <strong id="label-proyek-aktif">Belum disimpan</strong>. Perubahan pada proyek aktif tersimpan otomatis, tanpa menimpa proyek lain.
+            Perubahan pada proyek aktif tersimpan otomatis, tanpa menimpa proyek lain.
         </p>
     </div>
 
@@ -430,9 +430,6 @@
                 sel.appendChild(opt);
             });
         }
-
-        const active = list.find(p => p.id === activeId);
-        document.getElementById('label-proyek-aktif').textContent = active ? active.nama : 'Belum disimpan';
     }
 
     function muatProyekTerpilih() {
@@ -565,6 +562,24 @@
     function simpanDanHitung() {
         hitungSemua();
         simpanKeStorage();
+        updateJudulHalaman();
+    }
+
+    // Mengubah judul dokumen (document.title) mengikuti nama proyek/
+    // pelanggan yang sedang diisi. Browser memakai judul dokumen ini
+    // sebagai nama file bawaan saat "Ekspor PDF / Cetak" (Save as PDF)
+    // maupun saat menyimpan halaman, sehingga file yang dihasilkan
+    // otomatis ikut berganti nama saat nama proyek diubah.
+    function updateJudulHalaman() {
+        const namaProyek = document.getElementById('cust-proyek').value.trim();
+        const namaPelanggan = document.getElementById('cust-nama').value.trim();
+        let judul = 'Kalkulator Penawaran Proyek - Velox Interior';
+        if (namaProyek) {
+            judul = `Penawaran - ${namaProyek}`;
+        } else if (namaPelanggan) {
+            judul = `Penawaran - ${namaPelanggan}`;
+        }
+        document.title = judul;
     }
 
     function simpanKeStorage() {
@@ -584,6 +599,14 @@
         } else {
             project.data = data;
             project.updatedAt = Date.now();
+            // Nama proyek tersimpan (yang tampil di daftar "Proyek Tersimpan")
+            // ikut mengikuti field Nama Proyek/Nama Pelanggan. Dibiarkan
+            // tidak berubah kalau keduanya kosong, supaya proyek tidak
+            // tiba-tiba tampil tanpa nama di daftar.
+            const namaTerbaru = data.pelanggan.proyek || data.pelanggan.nama;
+            if (namaTerbaru) {
+                project.nama = namaTerbaru;
+            }
         }
 
         const berhasil = saveProjects(list);
@@ -910,6 +933,7 @@
 
         updateNomorUrut();
         hitungSemua();
+        updateJudulHalaman();
     }
 
     window.onload = () => {
@@ -928,6 +952,7 @@
             document.getElementById('cust-tanggal').valueAsDate = new Date();
             updateNomorUrut();
             hitungSemua();
+            updateJudulHalaman();
         }
     };
 
@@ -961,6 +986,7 @@
         updateNomorUrut();
         hitungSemua();
         renderDaftarProyek();
+        updateJudulHalaman();
     }
 </script>
 </body>
