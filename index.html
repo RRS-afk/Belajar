@@ -104,7 +104,7 @@
 <div class="container">
     <!-- KOP SURAT (Hanya Tampil Saat Dicetak / PDF) -->
     <div class="kop-surat">
-        <img src="Velox Logo.png" alt="Velox Design Studio Logo" class="kop-logo">[cite: 1]
+        <img src="Velox Logo.png" alt="Velox Design Studio Logo" class="kop-logo">
         <div class="kop-info">
             <h2>VELOX DESIGN STUDIO</h2>
             <span>Spesialis Interior & Kontraktor Custom</span><br>
@@ -250,7 +250,7 @@
                 pajak: document.getElementById('persen-pajak').value
             }
         };
-        localStorage.setItem('dataRABVeloxV8', JSON.stringify(data));
+        localStorage.setItem('dataRABVeloxV10', JSON.stringify(data));
         
         const status = document.getElementById('status-simpan');
         status.style.display = 'block';
@@ -263,7 +263,12 @@
         return Array.from(rows).map(row => {
             const inputs = row.querySelectorAll('input');
             const select = row.querySelector('select');
-            let satuanVal = select.value === 'Lainnya' ? (inputs[2] ? inputs[2].value : '') : select.value;
+            let satuanVal = '';
+            if (select.value === 'Lainnya') {
+                satuanVal = inputs[2] ? inputs[2].value : '';
+            } else {
+                satuanVal = select.value;
+            }
             return { 
                 nama: inputs[0].value, 
                 qty: inputs[1].value, 
@@ -279,7 +284,7 @@
         const tbody = document.querySelector(`#${id} tbody`);
         const tr = document.createElement('tr');
         
-        let listSatuan = tipe === 'jasa' ? ['m1', 'm2', 'titik', 'trip'] : ['batang', 'lembar', 'pcs', 'tube', 'unit', 'box'];
+        let listSatuan = tipe === 'jasa' ? ['m1', 'm2', 'titik', 'trip'] : ['batang', 'lembar', 'pcs', 'tube', 'box', 'unit'];
         if(!satuanType) satuanType = tipe === 'jasa' ? 'titik' : 'pcs';
 
         let isCustom = !listSatuan.includes(satuanType) && satuanType !== '';
@@ -301,9 +306,9 @@
                 <option value="batang" ${currentSelectVal==='batang'?'selected':''}>Batang</option>
                 <option value="lembar" ${currentSelectVal==='lembar'?'selected':''}>Lembar</option>
                 <option value="pcs" ${currentSelectVal==='pcs'?'selected':''}>Pcs</option>
-                <option value="unit" ${currentSelectVal==='unit'?'selected':''}>Unit</option>
                 <option value="tube" ${currentSelectVal==='tube'?'selected':''}>Tube</option>
                 <option value="box" ${currentSelectVal==='box'?'selected':''}>Box</option>
+                <option value="unit" ${currentSelectVal==='unit'?'selected':''}>Unit</option>
                 <option value="Lainnya" ${currentSelectVal==='Lainnya'?'selected':''}>Lainnya (Isi sendiri)</option>
             `;
         }
@@ -312,10 +317,10 @@
             <td><input type="text" value="${nama}" oninput="simpanDanHitung()"></td>
             <td><input type="number" class="qty" value="${qty}" oninput="simpanDanHitung()"></td>
             <td>
-                <select onchange="handleSatuanChange(this)">
+                <select onchange="handleSatuanChange(this)" style="display: ${isCustom ? 'none' : 'block'};">
                     ${optionsHTML}
                 </select>
-                <input type="text" class="custom-satuan" placeholder="Ketik satuan..." value="${customInputValue}" style="margin-top: 5px; display: ${customInputDisplay};" oninput="simpanDanHitung()">
+                <input type="text" class="custom-satuan" placeholder="Ketik satuan..." value="${customInputValue}" style="display: ${isCustom ? 'block' : 'none'};" oninput="simpanDanHitung()">
             </td>
             <td class="modal-col"><input type="text" class="price-modal" value="${modal}" oninput="formatInputRupiah(this)"></td>
             <td><input type="text" class="price-jual" readonly></td>
@@ -325,15 +330,15 @@
     }
 
     function handleSatuanChange(selectEl) {
-        const customInput = selectEl.nextElementSibling;
         if (selectEl.value === 'Lainnya') {
+            const td = selectEl.closest('td');
+            const customInput = td.querySelector('.custom-satuan');
+            selectEl.style.display = 'none';
             customInput.style.display = 'block';
-            customInput.focus();
-        } else {
-            customInput.style.display = 'none';
             customInput.value = '';
+            customInput.focus();
+            simpanDanHitung();
         }
-        simpanDanHitung();
     }
 
     function formatInputRupiah(el) { el.value = new Intl.NumberFormat('id-ID').format(getAngka(el.value)); simpanDanHitung(); }
@@ -387,7 +392,7 @@
     }
 
     window.onload = () => {
-        const data = JSON.parse(localStorage.getItem('dataRABVeloxV8'));
+        const data = JSON.parse(localStorage.getItem('dataRABVeloxV10'));
         if(data) {
             if(data.pelanggan) {
                 document.getElementById('cust-nama').value = data.pelanggan.nama || '';
@@ -426,7 +431,7 @@
 
     function resetData() { 
         if(confirm("Anda yakin ingin menghapus semua data?")) { 
-            localStorage.removeItem('dataRABVeloxV8'); 
+            localStorage.removeItem('dataRABVeloxV10'); 
             location.reload(); 
         } 
     }
