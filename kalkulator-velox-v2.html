@@ -32,7 +32,7 @@
         
         .table-responsive { overflow-x: auto; margin-bottom: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 14px; vertical-align: top; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 14px; vertical-align: middle; }
         th { background: #f9fafb; font-weight: 600; color: #4b5563; }
         
         input, select, textarea { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 14px; }
@@ -40,7 +40,7 @@
         input[readonly] { background-color: #e5e7eb; color: #374151; font-weight: bold; border-color: #d1d5db; }
         .input-warning { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
         
-        .subtotal-text { font-weight: bold; color: #1f2937; white-space: nowrap; text-align: right; vertical-align: middle; }
+        .subtotal-text { display: block; box-sizing: border-box; width: 100%; padding: 8px; border: 1px solid transparent; border-radius: 5px; font-size: 14px; font-weight: bold; color: #1f2937; white-space: nowrap; text-align: right; }
         .modal-col { background-color: #fef2f2; }
         .no-col { width: 46px; text-align: center; font-weight: bold; color: #6b7280; }
         .no-col-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -688,7 +688,7 @@
             </td>
             <td class="modal-col"><input type="text" class="price-modal" value="${escapeHtml(modal)}" oninput="formatInputRupiah(this)"></td>
             <td><input type="text" class="price-jual" readonly></td>
-            <td class="subtotal-text">Rp 0</td>
+            <td><div class="subtotal-text">Rp 0</div></td>
             <td>
                 <div class="aksi-group">
                     <button class="btn-duplikat" type="button" onclick="duplikatBaris(this)" title="Duplikat baris ini">Duplikat</button>
