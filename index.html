@@ -128,44 +128,44 @@
 
     <!-- PENGATURAN MARGIN (Disembunyikan saat print) -->
     <div class="card no-print" style="background-color: #e0f2fe; border: 1px solid #bae6fd;">
-        <h3 style="color: #0369a1; border-color: #bae6fd;">Pengaturan Margin (Markup Otomatis ke Harga Jual)</h3>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 150px;">
+        <h3 style="color: #0369a1; border-color: #bae6fd;">Pengaturan Margin & Pajak</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+            <div style="flex: 1; min-width: 140px;">
                 <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Biaya Tak Terduga (%)</label>
                 <input type="number" id="persen-contingency" value="3" oninput="simpanDanHitung()">
             </div>
-            <div style="flex: 1; min-width: 150px;">
+            <div style="flex: 1; min-width: 140px;">
                 <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Target Keuntungan (%)</label>
                 <input type="number" id="persen-profit" value="15" oninput="simpanDanHitung()">
             </div>
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-size: 13px; display: block; margin-bottom: 5px; font-weight:bold;">Pajak / PPN (%)</label>
-                <input type="number" id="persen-pajak" value="0" oninput="simpanDanHitung()">
+            <div style="flex: 1; min-width: 180px; display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                <input type="checkbox" id="check-pajak" checked onchange="simpanDanHitung()" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="check-pajak" style="font-size: 13px; font-weight: bold; color: #0369a1; cursor: pointer; margin: 0;">Gunakan Pajak PPN (11%)</label>
             </div>
         </div>
         <p style="font-size: 12px; color: #0369a1; margin-top: 10px; margin-bottom: 0;">
-            <em>*Angka % di atas akan otomatis disembunyikan dan langsung dilebur ke dalam <b>Harga Satuan</b> saat diekspor ke PDF.</em>
+            <em>*Biaya tak terduga & profit langsung mendongkrak harga satuan. PPN 11% dapat dicentang atau dihilangkan sesuai kebutuhan proyek.</em>
         </p>
     </div>
 
     <!-- TABEL 1: BAHAN & MATERIAL -->
     <div class="card">
         <h3>1. Rincian Bahan & Material</h3>
-        <div class="table-responsive"><table id="tbl-bahan"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Modal</th><th>Harga Jual</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-responsive"><table id="tbl-bahan"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Harga Modal (Satuan)</th><th>Harga Jual (Klien)</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
         <button class="btn-add" onclick="tambahBaris('tbl-bahan', 'material')">Tambah Bahan</button>
     </div>
 
     <!-- TABEL 2: ALAT KERJA / BAHAN PASANG -->
     <div class="card">
         <h3>2. Rincian Bahan Pasang / Alat Kerja</h3>
-        <div class="table-responsive"><table id="tbl-alat"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Modal</th><th>Harga Jual</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-responsive"><table id="tbl-alat"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Harga Modal (Satuan)</th><th>Harga Jual (Klien)</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
         <button class="btn-add" onclick="tambahBaris('tbl-alat', 'material')">Tambah Alat/Bahan Pasang</button>
     </div>
 
     <!-- TABEL 3: JASA & OPERASIONAL -->
     <div class="card">
         <h3>3. Rincian Jasa & Operasional</h3>
-        <div class="table-responsive"><table id="tbl-jasa"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Modal</th><th>Harga Jual</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-responsive"><table id="tbl-jasa"><thead><tr><th>Uraian</th><th>Vol</th><th>Satuan</th><th class="modal-col">Harga Modal (Satuan)</th><th>Harga Jual (Klien)</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
         <button class="btn-add" onclick="tambahBaris('tbl-jasa', 'jasa')">Tambah Jasa</button>
     </div>
 
@@ -181,7 +181,7 @@
         </div>
 
         <div class="flex-row" id="row-pajak">
-            <span>Pajak (PPN):</span><span id="rek-pajak">Rp 0</span>
+            <span>Pajak PPN (11%):</span><span id="rek-pajak">Rp 0</span>
         </div>
         
         <div class="flex-row total-row">
@@ -247,10 +247,10 @@
             pengaturan: {
                 contingency: document.getElementById('persen-contingency').value,
                 profit: document.getElementById('persen-profit').value,
-                pajak: document.getElementById('persen-pajak').value
+                usePajak: document.getElementById('check-pajak').checked
             }
         };
-        localStorage.setItem('dataRABVeloxV10', JSON.stringify(data));
+        localStorage.setItem('dataRABVeloxV12', JSON.stringify(data));
         
         const status = document.getElementById('status-simpan');
         status.style.display = 'block';
@@ -346,7 +346,8 @@
     function hitungSemua() {
         const pContingency = parseFloat(document.getElementById('persen-contingency').value) || 0;
         const pProfit = parseFloat(document.getElementById('persen-profit').value) || 0;
-        const pPajak = parseFloat(document.getElementById('persen-pajak').value) || 0;
+        const usePajak = document.getElementById('check-pajak').checked;
+        const pPajak = usePajak ? 11 : 0;
         
         const totalMarkupPersen = pContingency + pProfit;
 
@@ -357,6 +358,7 @@
             const qty = parseFloat(row.querySelector('.qty').value) || 0;
             const modal = getAngka(row.querySelector('.price-modal').value);
             
+            // Langsung mendongkrak harga satuan dasar sesuai persentase markup tak terduga & profit
             let hargaJual = modal + (modal * (totalMarkupPersen / 100));
             if(hargaJual > 0) {
                 hargaJual = Math.ceil(hargaJual / 100) * 100; 
@@ -381,7 +383,7 @@
         document.getElementById('print-subtotal').innerText = formatRupiah(totalPenawaranKeseluruhan);
         
         const rowPajak = document.getElementById('row-pajak');
-        if (pPajak > 0) {
+        if (usePajak) {
             rowPajak.style.display = 'flex';
             document.getElementById('rek-pajak').innerText = formatRupiah(nilaiPajak);
         } else {
@@ -392,7 +394,7 @@
     }
 
     window.onload = () => {
-        const data = JSON.parse(localStorage.getItem('dataRABVeloxV10'));
+        const data = JSON.parse(localStorage.getItem('dataRABVeloxV12'));
         if(data) {
             if(data.pelanggan) {
                 document.getElementById('cust-nama').value = data.pelanggan.nama || '';
@@ -402,9 +404,11 @@
                 document.getElementById('cust-berlaku').value = data.pelanggan.berlaku || '14';
             }
             if(data.pengaturan) {
-                document.getElementById('persen-contingency').value = data.pengaturan.contingency || 3;
-                document.getElementById('persen-profit').value = data.pengaturan.profit || 15;
-                document.getElementById('persen-pajak').value = data.pengaturan.pajak || 0;
+                document.getElementById('persen-contingency').value = data.pengaturan.contingency !== undefined ? data.pengaturan.contingency : 3;
+                document.getElementById('persen-profit').value = data.pengaturan.profit !== undefined ? data.pengaturan.profit : 15;
+                if(data.pengaturan.usePajak !== undefined) {
+                    document.getElementById('check-pajak').checked = data.pengaturan.usePajak;
+                }
             }
             if(data.tc) {
                 document.getElementById('input-tc').value = data.tc;
@@ -431,7 +435,7 @@
 
     function resetData() { 
         if(confirm("Anda yakin ingin menghapus semua data?")) { 
-            localStorage.removeItem('dataRABVeloxV10'); 
+            localStorage.removeItem('dataRABVeloxV12'); 
             location.reload(); 
         } 
     }
