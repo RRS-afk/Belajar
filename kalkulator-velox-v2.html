@@ -47,6 +47,15 @@
         .btn-add { background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; display: block; margin-top: 5px; }
         .btn-add:hover { background: #dbeafe; }
         .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
+
+        .aksi-group { display: flex; flex-direction: column; gap: 4px; min-width: 110px; }
+        .aksi-row { display: flex; gap: 4px; }
+        .aksi-row button { flex: 1; padding: 6px 4px; font-size: 12px; }
+        .btn-move { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-move:hover:not(:disabled) { background: #e5e7eb; }
+        .btn-move:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-duplikat { background: #dbeafe; color: #1d4ed8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-duplikat:hover { background: #bfdbfe; }
         
         .summary-card { background: #1f2937; color: #f9fafb; border-radius: 10px; padding: 20px; }
         .summary-card h3 { color: #60a5fa; border-color: #374151; }
@@ -91,7 +100,7 @@
 
             body { background-color: #ffffff; color: #000; padding: 0; }
             .container { max-width: 100%; width: 100%; margin: 0; }
-            .no-print, .btn-add, .btn-delete, .btn-reset, .btn-print, #status-simpan, .header-action, .screen-only { display: none !important; }
+            .no-print, .btn-add, .btn-delete, .btn-reset, .btn-print, .btn-move, .btn-duplikat, #status-simpan, .header-action, .screen-only { display: none !important; }
             .print-only { display: flex !important; }
             .print-only-block { display: block !important; }
             .kop-surat { display: flex !important; }
@@ -281,11 +290,14 @@
     <div class="card">
         <h3>Kondisi & Ketentuan (T&C) serta Pembayaran</h3>
         <div class="input-group">
-            <label>Detail Ketentuan & Rekening Pembayaran</label>
-            <textarea id="input-tc" rows="6" oninput="simpanDanHitung()">1. Pembayaran DP 50% di awal kontrak.
+            <label>Detail Ketentuan (Syarat & Ketentuan)</label>
+            <textarea id="input-tc" rows="5" oninput="simpanDanHitung()">1. Pembayaran DP 50% di awal kontrak.
 2. Pelunasan 50% setelah pekerjaan selesai.
-3. Estimasi waktu pengerjaan sesuai kesepakatan.
-4. Pembayaran dapat ditransfer melalui Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra.</textarea>
+3. Estimasi waktu pengerjaan sesuai kesepakatan.</textarea>
+        </div>
+        <div class="input-group">
+            <label>Informasi Rekening Pembayaran</label>
+            <input type="text" id="input-rekening" value="Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra" oninput="simpanDanHitung()">
         </div>
     </div>
 
@@ -312,6 +324,18 @@
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
     function getAngka(inputVal) { return parseFloat(inputVal.toString().replace(/[^0-9]/g, '')) || 0; }
 
+    // Escape karakter HTML berbahaya sebelum disisipkan ke innerHTML,
+    // supaya uraian/satuan custom yang mengandung ", <, >, dsb (misal
+    // hasil copy-paste) tidak merusak tampilan atau memicu injeksi HTML.
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     /* ========================================================= */
     /* PENYIMPANAN MULTI-PROYEK                                   */
     /* Setiap proyek disimpan sebagai entri terpisah di localStorage,*/
@@ -330,35 +354,57 @@
         try {
             return JSON.parse(localStorage.getItem(KEY_PROJECTS)) || [];
         } catch (e) {
+            console.error('Gagal membaca data proyek dari penyimpanan lokal:', e);
             return [];
         }
     }
 
+    // Mengembalikan true bila berhasil, false bila gagal (mis. storage
+    // penuh atau localStorage diblokir oleh mode private browsing),
+    // supaya pemanggil bisa memberi tahu pengguna.
     function saveProjects(list) {
-        localStorage.setItem(KEY_PROJECTS, JSON.stringify(list));
+        try {
+            localStorage.setItem(KEY_PROJECTS, JSON.stringify(list));
+            return true;
+        } catch (e) {
+            console.error('Gagal menyimpan data proyek ke penyimpanan lokal:', e);
+            return false;
+        }
     }
 
-    function getActiveId() { return localStorage.getItem(KEY_ACTIVE) || null; }
+    function getActiveId() {
+        try {
+            return localStorage.getItem(KEY_ACTIVE) || null;
+        } catch (e) {
+            console.error('Gagal membaca ID proyek aktif:', e);
+            return null;
+        }
+    }
     function setActiveId(id) {
-        if (id) localStorage.setItem(KEY_ACTIVE, id);
-        else localStorage.removeItem(KEY_ACTIVE);
+        try {
+            if (id) localStorage.setItem(KEY_ACTIVE, id);
+            else localStorage.removeItem(KEY_ACTIVE);
+        } catch (e) {
+            console.error('Gagal menyimpan ID proyek aktif:', e);
+        }
     }
 
     // Migrasi otomatis: jika masih ada data format lama (1 proyek saja)
     // dan sistem multi-proyek belum pernah dipakai, pindahkan datanya
     // menjadi proyek pertama pada sistem baru.
     function migrasiDataLama() {
-        if (localStorage.getItem(KEY_PROJECTS)) return;
-        const dataLama = localStorage.getItem(KEY_LEGACY);
-        if (!dataLama) return;
         try {
+            if (localStorage.getItem(KEY_PROJECTS)) return;
+            const dataLama = localStorage.getItem(KEY_LEGACY);
+            if (!dataLama) return;
             const parsed = JSON.parse(dataLama);
             const nama = (parsed.pelanggan && parsed.pelanggan.proyek) ? parsed.pelanggan.proyek : 'Proyek Migrasi';
             const project = { id: generateId(), nama: nama, updatedAt: Date.now(), data: parsed };
             saveProjects([project]);
             setActiveId(project.id);
         } catch (e) {
-            // data lama korup, abaikan migrasi
+            // data lama korup atau localStorage tidak bisa diakses, abaikan migrasi
+            console.error('Gagal migrasi data lama:', e);
         }
     }
 
@@ -408,7 +454,10 @@
         const list = getProjects();
         const project = { id: generateId(), nama: namaBersih, updatedAt: Date.now(), data: data };
         list.push(project);
-        saveProjects(list);
+        if (!saveProjects(list)) {
+            alert('Gagal menyimpan proyek baru. Penyimpanan lokal browser mungkin penuh atau diblokir.');
+            return;
+        }
         setActiveId(project.id);
         renderDaftarProyek();
     }
@@ -420,7 +469,10 @@
         const project = list.find(p => p.id === id);
         if (!project) return;
         if (!confirm(`Hapus proyek "${project.nama}"? Tindakan ini tidak bisa dibatalkan.`)) return;
-        saveProjects(list.filter(p => p.id !== id));
+        if (!saveProjects(list.filter(p => p.id !== id))) {
+            alert('Gagal menghapus proyek. Penyimpanan lokal browser mungkin penuh atau diblokir.');
+            return;
+        }
         if (getActiveId() === id) setActiveId(null);
         renderDaftarProyek();
     }
@@ -438,6 +490,7 @@
             alat: ambilDataTabel('tbl-alat'),
             jasa: ambilDataTabel('tbl-jasa'),
             tc: document.getElementById('input-tc').value,
+            rekening: document.getElementById('input-rekening').value,
             pengaturan: {
                 contingency: document.getElementById('persen-contingency').value,
                 profit: document.getElementById('persen-profit').value,
@@ -532,13 +585,27 @@
             project.updatedAt = Date.now();
         }
 
-        saveProjects(list);
+        const berhasil = saveProjects(list);
         renderDaftarProyek();
+        tampilkanStatusSimpan(berhasil);
+    }
 
+    // Menampilkan status simpan di bagian atas form. Saat gagal (mis.
+    // storage penuh atau localStorage diblokir oleh mode private
+    // browsing), pesan ditampilkan lebih lama dan berwarna merah supaya
+    // pengguna sadar perubahannya belum tersimpan.
+    function tampilkanStatusSimpan(berhasil) {
         const status = document.getElementById('status-simpan');
+        if (berhasil) {
+            status.textContent = 'Tersimpan otomatis';
+            status.style.color = '#10b981';
+        } else {
+            status.textContent = 'Gagal menyimpan! Penyimpanan lokal penuh atau diblokir browser.';
+            status.style.color = '#ef4444';
+        }
         status.style.display = 'block';
         clearTimeout(timeoutSimpan);
-        timeoutSimpan = setTimeout(() => { status.style.display = 'none'; }, 2000);
+        timeoutSimpan = setTimeout(() => { status.style.display = 'none'; }, berhasil ? 2000 : 5000);
     }
 
     function ambilDataTabel(id) {
@@ -572,6 +639,7 @@
     /* ========================================================= */
     function buatElemenBaris(tipe = 'material', nama = '', qty = '1', satuanType = '', satuanCustom = '', modal = '0') {
         const tr = document.createElement('tr');
+        tr.dataset.tipe = tipe; // dipakai lagi oleh fungsi duplikatBaris()
 
         let listSatuan = tipe === 'jasa' ? ['m1', 'm2', 'titik', 'trip'] : ['batang', 'lembar', 'pcs', 'tube', 'box', 'unit'];
         if (!satuanType) satuanType = tipe === 'jasa' ? 'titik' : 'pcs';
@@ -603,20 +671,71 @@
 
         tr.innerHTML = `
             <td class="no-col row-number"></td>
-            <td><input type="text" class="input-uraian" value="${nama}" oninput="validasiUraian(this); simpanDanHitung()" onblur="validasiUraian(this)"></td>
-            <td><input type="number" class="qty" min="0" value="${qty}" oninput="validasiQty(this); simpanDanHitung()"></td>
+            <td><input type="text" class="input-uraian" value="${escapeHtml(nama)}" oninput="validasiUraian(this); simpanDanHitung()" onblur="validasiUraian(this)"></td>
+            <td><input type="number" class="qty" min="0" value="${escapeHtml(qty)}" oninput="validasiQty(this); simpanDanHitung()"></td>
             <td>
                 <select onchange="handleSatuanChange(this)" style="display: ${isCustom ? 'none' : 'block'};">
                     ${optionsHTML}
                 </select>
-                <input type="text" class="custom-satuan" placeholder="Ketik satuan..." value="${customInputValue}" style="display: ${isCustom ? 'block' : 'none'};" oninput="simpanDanHitung()">
+                <input type="text" class="custom-satuan" placeholder="Ketik satuan..." value="${escapeHtml(customInputValue)}" style="display: ${isCustom ? 'block' : 'none'};" oninput="simpanDanHitung()">
             </td>
-            <td class="modal-col"><input type="text" class="price-modal" value="${modal}" oninput="formatInputRupiah(this)"></td>
+            <td class="modal-col"><input type="text" class="price-modal" value="${escapeHtml(modal)}" oninput="formatInputRupiah(this)"></td>
             <td><input type="text" class="price-jual" readonly></td>
             <td class="subtotal-text">Rp 0</td>
-            <td><button class="btn-delete" onclick="this.closest('tr').remove(); updateNomorUrut(); simpanDanHitung();">Hapus</button></td>`;
+            <td>
+                <div class="aksi-group">
+                    <div class="aksi-row">
+                        <button class="btn-move" type="button" data-arah="up" onclick="pindahBaris(this, 'up')" title="Pindah baris ke atas">&#9650;</button>
+                        <button class="btn-move" type="button" data-arah="down" onclick="pindahBaris(this, 'down')" title="Pindah baris ke bawah">&#9660;</button>
+                    </div>
+                    <div class="aksi-row">
+                        <button class="btn-duplikat" type="button" onclick="duplikatBaris(this)" title="Duplikat baris ini">Duplikat</button>
+                        <button class="btn-delete" type="button" onclick="this.closest('tr').remove(); updateNomorUrut(); simpanDanHitung();" title="Hapus baris ini">Hapus</button>
+                    </div>
+                </div>
+            </td>`;
 
         return tr;
+    }
+
+    // Menduplikat baris yang sudah ada (uraian, vol, satuan, harga modal)
+    // lalu menyisipkannya tepat di bawah baris asal, supaya item yang
+    // mirip tidak perlu diketik ulang dari nol.
+    function duplikatBaris(btn) {
+        const row = btn.closest('tr');
+        const tipe = row.dataset.tipe || 'material';
+
+        const nama = row.querySelector('.input-uraian').value;
+        const qty = row.querySelector('.qty').value;
+        const select = row.querySelector('select');
+        const customInput = row.querySelector('.custom-satuan');
+        const modal = getAngka(row.querySelector('.price-modal').value);
+
+        let satuanType;
+        if (select && select.value === 'Lainnya') {
+            satuanType = (customInput && customInput.value) ? customInput.value : 'Lainnya';
+        } else {
+            satuanType = select ? select.value : '';
+        }
+
+        const barisBaru = buatElemenBaris(tipe, nama, qty, satuanType, '', modal);
+        row.after(barisBaru);
+        updateNomorUrut();
+        simpanDanHitung();
+    }
+
+    // Memindah satu baris ke atas/bawah di dalam tabel yang sama.
+    function pindahBaris(btn, arah) {
+        const row = btn.closest('tr');
+        if (arah === 'up') {
+            const prev = row.previousElementSibling;
+            if (prev) row.parentNode.insertBefore(row, prev);
+        } else {
+            const next = row.nextElementSibling;
+            if (next) row.parentNode.insertBefore(next, row);
+        }
+        updateNomorUrut();
+        simpanDanHitung();
     }
 
     // Menambah satu baris tunggal (dipakai oleh tombol "Tambah Bahan/Alat/Jasa")
@@ -652,6 +771,10 @@
                 if (noCell) {
                     noCell.innerText = index + 1;
                 }
+                const btnUp = row.querySelector('.btn-move[data-arah="up"]');
+                const btnDown = row.querySelector('.btn-move[data-arah="down"]');
+                if (btnUp) btnUp.disabled = (index === 0);
+                if (btnDown) btnDown.disabled = (index === rows.length - 1);
             });
         });
     }
@@ -772,6 +895,9 @@
         if (data.tc !== undefined) {
             document.getElementById('input-tc').value = data.tc;
         }
+        document.getElementById('input-rekening').value = data.rekening !== undefined
+            ? data.rekening
+            : 'Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra';
 
         ['tbl-bahan', 'tbl-alat', 'tbl-jasa'].forEach(id => {
             document.querySelector(`#${id} tbody`).innerHTML = '';
@@ -821,8 +947,8 @@
         document.getElementById('check-pajak').checked = true;
         document.getElementById('input-tc').value = `1. Pembayaran DP 50% di awal kontrak.
 2. Pelunasan 50% setelah pekerjaan selesai.
-3. Estimasi waktu pengerjaan sesuai kesepakatan.
-4. Pembayaran dapat ditransfer melalui Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra.`;
+3. Estimasi waktu pengerjaan sesuai kesepakatan.`;
+        document.getElementById('input-rekening').value = 'Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra';
 
         ['tbl-bahan', 'tbl-alat', 'tbl-jasa'].forEach(id => {
             document.querySelector(`#${id} tbody`).innerHTML = '';
