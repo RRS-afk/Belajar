@@ -294,7 +294,7 @@
                 usePajak: document.getElementById('check-pajak').checked
             }
         };
-        localStorage.setItem('dataRABVeloxV15', JSON.stringify(data));
+        localStorage.setItem('dataRABVeloxV16', JSON.stringify(data));
         
         const status = document.getElementById('status-simpan');
         status.style.display = 'block';
@@ -427,7 +427,7 @@
             nilaiDiskonRupiah = totalPenawaranKeseluruhan * (valDiskonInput / 100);
             document.getElementById('label-diskon-teks').innerText = `Diskon Proyek (${valDiskonInput}%):`;
         } else {
-            nilaiDiskonRupiah = valDiskonInput;
+            nilaiDiskonRupiah = getAngka(rawDiskonInput);
             document.getElementById('label-diskon-teks').innerText = "Diskon Proyek:";
         }
 
@@ -462,7 +462,7 @@
     }
 
     window.onload = () => {
-        const data = JSON.parse(localStorage.getItem('dataRABVeloxV15'));
+        const data = JSON.parse(localStorage.getItem('dataRABVeloxV16'));
         if(data) {
             if(data.pelanggan) {
                 document.getElementById('cust-nama').value = data.pelanggan.nama || '';
@@ -507,7 +507,7 @@
 
     function resetData() { 
         if(confirm("Anda yakin ingin menghapus semua data?")) { 
-            localStorage.removeItem('dataRABVeloxV15'); 
+            localStorage.removeItem('dataRABVeloxV16'); 
             location.reload(); 
         } 
     }
