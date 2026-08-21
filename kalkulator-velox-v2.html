@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Penawaran Proyek - Velox Interior</title>
+    <title>Penawaran Harga - Velox Interior</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 10px; }
         .container { max-width: 1000px; margin: auto; }
+        
+        .main-title-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .main-title-header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         
         .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .btn-group { display: flex; gap: 10px; width: 100%; justify-content: flex-end; }
@@ -23,79 +37,128 @@
         .btn-proyek-hapus { background: #fee2e2; color: #dc2626; border-color: #f87171; }
         .btn-proyek-hapus:hover { background: #fecaca; }
         
-        .card { background: #ffffff; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        h3 { margin-top: 0; color: #111827; font-size: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 15px; }
+        .card { background: #ffffff; border-radius: 8px; padding: 12px 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        h3 { margin-top: 0; color: #111827; font-size: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 10px; }
         
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .input-group { margin-bottom: 10px; }
-        .input-group label { font-size: 13px; font-weight: 600; color: #4b5563; display: block; margin-bottom: 5px; }
+        /* Grid Data Pelanggan */
+        .grid-customer { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+        .input-group { margin-bottom: 4px; }
+        .input-group label { font-size: 12.5px; font-weight: bold; color: #1f2937; display: block; margin-bottom: 2px; }
         
-        .table-responsive { overflow-x: auto; margin-bottom: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
+        .berlaku-options { display: flex; gap: 15px; align-items: center; padding-top: 4px; }
+        .berlaku-options label { font-size: 13px; font-weight: normal !important; color: #1f2937; display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0; }
+        .berlaku-options input[type="radio"] { width: auto; margin: 0; cursor: pointer; font-weight: normal; }
+        
+        .table-responsive { overflow-x: auto; margin-bottom: 8px; border: 1px solid #e5e7eb; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 14px; vertical-align: middle; }
-        th { background: #f9fafb; font-weight: 600; color: #4b5563; }
         
-        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 14px; }
+        /* Head Table Bold */
+        th { 
+            background: #f9fafb; 
+            font-weight: bold !important; 
+            color: #111827; 
+            padding: 9px 10px; 
+            text-align: left; 
+            border-bottom: 2px solid #e5e7eb; 
+            font-size: 13.5px; 
+            vertical-align: middle; 
+        }
+        
+        /* Isi Tabel Normal */
+        td { 
+            padding: 8px 10px; 
+            text-align: left; 
+            border-bottom: 1px solid #e5e7eb; 
+            font-size: 13.5px; 
+            vertical-align: top; 
+            font-weight: normal; 
+        }
+        
+        input, select, textarea { width: 100%; padding: 7px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 13.5px; font-family: inherit; font-weight: normal !important; }
         input:focus, select:focus, textarea:focus { border-color: #3b82f6; outline: none; }
-        input[readonly] { background-color: #e5e7eb; color: #374151; font-weight: bold; border-color: #d1d5db; }
+        input[readonly] { background-color: #e5e7eb; color: #374151; font-weight: normal !important; border-color: #d1d5db; }
         .input-warning { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
         
-        .subtotal-text { display: block; box-sizing: border-box; width: 100%; padding: 8px; border: 1px solid transparent; border-radius: 5px; font-size: 14px; font-weight: bold; color: #1f2937; white-space: nowrap; text-align: right; }
-        .modal-col { background-color: #fef2f2; }
-        .no-col { width: 46px; text-align: center; font-weight: bold; color: #6b7280; }
-        .no-col-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .no-col-wrap .row-number { line-height: 1.2; }
+        textarea.input-uraian {
+            resize: vertical;
+            min-height: 38px;
+            line-height: 1.4;
+            display: block;
+            font-weight: normal !important;
+        }
 
-        .btn-add { background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; display: block; margin-top: 5px; }
+        .print-uraian-view {
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.4;
+            font-size: 12.5px;
+            font-weight: normal !important;
+        }
+
+        .print-tc-view {
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            font-size: 12.5px;
+            font-weight: normal !important;
+            color: #000;
+        }
+
+        .subtotal-text { display: block; box-sizing: border-box; width: 100%; padding: 6px; border: 1px solid transparent; border-radius: 5px; font-size: 13.5px; font-weight: normal; color: #1f2937; white-space: nowrap; text-align: right; }
+        .modal-col { background-color: #fef2f2; }
+        .no-col { width: 46px; text-align: center; color: #4b5563; }
+        .no-col-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .no-col-wrap .row-number { line-height: 1.2; font-weight: normal !important; }
+
+        .btn-add { background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb; padding: 8px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; display: block; margin-top: 4px; font-size: 13px; }
         .btn-add:hover { background: #dbeafe; }
-        .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
 
         .aksi-group { display: flex; flex-direction: column; gap: 4px; min-width: 80px; }
-        .aksi-group button { width: 100%; padding: 6px; font-size: 12px; }
+        .aksi-group button { width: 100%; padding: 5px; font-size: 12px; }
         .btn-move { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 4px; font-weight: bold; cursor: pointer; width: 22px; height: 18px; padding: 0; font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .btn-move:hover:not(:disabled) { background: #e5e7eb; }
         .btn-move:disabled { opacity: 0.35; cursor: not-allowed; }
         .btn-duplikat { background: #dbeafe; color: #1d4ed8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         .btn-duplikat:hover { background: #bfdbfe; }
         
-        .summary-card { background: #1f2937; color: #f9fafb; border-radius: 10px; padding: 20px; }
+        .summary-card { background: #1f2937; color: #f9fafb; border-radius: 8px; padding: 15px; }
         .summary-card h3 { color: #60a5fa; border-color: #374151; }
-        .flex-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .total-row { border-top: 2px dashed #4b5563; padding-top: 15px; margin-top: 15px; font-size: 18px; font-weight: bold; color: #34d399; }
+        .flex-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px; }
+        .total-row { border-top: 2px dashed #4b5563; padding-top: 12px; margin-top: 12px; font-size: 17px; font-weight: bold; color: #34d399; }
         
-        #status-simpan { font-size: 12px; color: #10b981; font-weight: bold; display: none; width: 100%; text-align: center; margin-bottom: 10px; }
+        #status-simpan { font-size: 12px; color: #10b981; font-weight: bold; display: none; width: 100%; text-align: center; margin-bottom: 8px; }
         .print-only { display: none; }
 
-        /* ========================================= */
-        /* KOP SURAT KHUSUS CETAK / PDF              */
-        /* ========================================= */
+        /* KOP SURAT KHUSUS CETAK / PDF */
         .kop-surat {
             display: none;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px double #1f2937;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #1f2937;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
         }
-        .kop-logo { max-height: 60px; object-fit: contain; }
-        .kop-info { text-align: right; font-size: 12px; color: #4b5563; line-height: 1.4; }
-        .kop-info h2 { margin: 0; color: #111827; font-size: 18px; }
+        .kop-logo { max-height: 55px; object-fit: contain; }
+        .kop-info { text-align: right; font-size: 11.5px; color: #4b5563; line-height: 1.4; }
+        .kop-info h2 { margin: 0; color: #111827; font-size: 17px; }
 
         @media print {
             @page {
                 size: A4;
-                margin: 15mm;
-                @top-center {
-                    content: "APLIKASI INSTAN PENAWARAN PROJEK - VELOX DESIGN STUDIO";
-                    font-size: 9pt;
-                    font-weight: bold;
-                    color: #4b5563;
+                margin: 15mm 15mm 20mm 15mm;
+                @bottom-left {
+                    content: "by Velox Design Interior";
+                    font-size: 8.5pt;
+                    color: #6b7280;
                 }
-                @bottom-center {
-                    content: "Aplikasi by Velox Design Interior - Muhamad Islahul Khoir";
-                    font-size: 9pt;
-                    color: #4b5563;
+                @bottom-right {
+                    content: counter(page) "/" counter(pages);
+                    font-size: 8.5pt;
+                    color: #6b7280;
                 }
             }
 
@@ -107,12 +170,39 @@
             .kop-surat { display: flex !important; }
             th.modal-col, td.modal-col { display: none !important; }
             th:last-child, td:last-child { display: none !important; }
-            .card { box-shadow: none; border: 1px solid #000; page-break-inside: avoid; margin-bottom: 15px; }
-            table { min-width: 100%; }
-            th, td { border: 1px solid #000; padding: 8px; font-size: 13px; }
-            .total-row { border-top: 2px solid #000 !important; color: #000 !important; }
             
-            input, select, textarea { border: none; background: transparent !important; padding: 0; color: #000; font-size: 13px; pointer-events: none; resize: none; appearance: none; }
+            .card { box-shadow: none !important; border: none !important; padding: 0 !important; margin-bottom: 12px !important; page-break-inside: avoid; }
+            .summary-card { background: transparent !important; color: #000 !important; border: none !important; padding: 0 !important; margin-top: 10px; }
+            .summary-card h3 { display: none; }
+            
+            table { min-width: 100%; border: 1px solid #000; margin-bottom: 8px; }
+            th { border: 1px solid #000; padding: 6px 8px; font-size: 12.5px; font-weight: bold !important; color: #000 !important; }
+            td { border: 1px solid #000; padding: 6px 8px; font-size: 12.5px; font-weight: normal !important; color: #000 !important; }
+            .table-responsive { border: none !important; margin-bottom: 4px !important; }
+            
+            .subtotal-text { font-weight: normal !important; padding: 0; }
+            .total-row { border-top: 2px solid #000 !important; color: #000 !important; font-size: 15px; }
+            
+            .main-title-header { border-bottom: 1.5px solid #000; margin-bottom: 12px; padding-bottom: 4px; }
+            .main-title-header h1 { font-size: 18px; }
+            h3 { border-bottom: none !important; padding-bottom: 0 !important; margin-bottom: 6px !important; font-size: 13.5px; font-weight: bold; }
+
+            .grid-customer { gap: 4px 15px; }
+            .input-group label { font-size: 12px; font-weight: bold !important; color: #000 !important; }
+            .berlaku-options { display: none !important; }
+
+            /* Field Nama Marketing disembunyikan dari tabel atas saat cetak karena sudah tampil di tanda tangan */
+            .field-marketing-group { display: none !important; }
+
+            input, select { border: none; background: transparent !important; padding: 0; color: #000; font-size: 12.5px; pointer-events: none; resize: none; appearance: none; font-weight: normal !important; }
+            
+            #print-cust-berlaku { font-weight: normal !important; color: #000; }
+
+            textarea.input-uraian { display: none !important; }
+            .print-uraian-view { display: block !important; color: #000; font-weight: normal !important; }
+
+            #input-tc { display: none !important; }
+            .print-tc-view { display: block !important; }
         }
     </style>
 </head>
@@ -124,14 +214,17 @@
         <img src="Velox Logo.png" alt="Velox Design Studio Logo" class="kop-logo">
         <div class="kop-info">
             <h2>VELOX DESIGN STUDIO</h2>
-            <span>Spesialis Arsitektur & Desain Interior</span><br>
+            <span>Arsitek dan Design Studio</span><br>
             <span>Telp/WhatsApp: +62 812-9025-7882 | Email: interiorvelox@gmail.com</span>
         </div>
     </div>
 
+    <div class="main-title-header">
+        <h1>PENAWARAN HARGA</h1>
+    </div>
+
     <div id="status-simpan">Tersimpan otomatis</div>
 
-    <!-- MANAJEMEN PROYEK TERSIMPAN (Baru: mendukung banyak proyek) -->
     <div class="card no-print" style="background-color: #fefce8; border: 1px solid #fde68a;">
         <h3 style="color: #92400e; border-color: #fde68a;">Manajemen Proyek Tersimpan</h3>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
@@ -141,26 +234,33 @@
             </div>
             <button type="button" class="btn-proyek" onclick="muatProyekTerpilih()">Muat Proyek</button>
             <button type="button" class="btn-proyek" onclick="simpanProyekBaru()">Simpan sbg Proyek Baru</button>
+            <button type="button" class="btn-proyek" onclick="gantiNamaProyekTerpilih()">Ganti Nama</button>
             <button type="button" class="btn-proyek btn-proyek-hapus" onclick="hapusProyekTerpilih()">Hapus</button>
         </div>
         <p style="font-size: 12px; color: #92400e; margin-top: 10px; margin-bottom: 0;">
-            Perubahan pada proyek aktif tersimpan otomatis, tanpa menimpa proyek lain.
+            Nama proyek tersimpan bersifat kustom dan tidak otomatis menimpa nama lain.
         </p>
     </div>
 
-    <!-- Data Pelanggan & Proyek -->
     <div class="card">
         <h3>Data Pelanggan & Proyek</h3>
-        <div class="grid-2">
+        <div class="grid-customer">
             <div class="input-group"><label>Nama Pelanggan</label><input type="text" id="cust-nama" oninput="simpanDanHitung()"></div>
             <div class="input-group"><label>Nama Proyek</label><input type="text" id="cust-proyek" oninput="simpanDanHitung()"></div>
             <div class="input-group"><label>Tanggal</label><input type="date" id="cust-tanggal" oninput="simpanDanHitung()"></div>
             <div class="input-group"><label>Lokasi</label><input type="text" id="cust-lokasi" oninput="simpanDanHitung()"></div>
-            <div class="input-group"><label>Masa Berlaku SPH (Hari)</label><input type="number" id="cust-berlaku" min="0" value="14" oninput="simpanDanHitung()"></div>
+            <div class="input-group field-marketing-group"><label>Nama Marketing (Velox)</label><input type="text" id="cust-marketing" placeholder="Contoh: Christian Adiputra" oninput="simpanDanHitung()"></div>
+            <div class="input-group">
+                <label>Masa Berlaku SPH</label>
+                <div class="berlaku-options">
+                    <label><input type="radio" name="cust-berlaku" value="14" checked onchange="updateMasaBerlakuTeks(); simpanDanHitung()"> 14 Hari</label>
+                    <label><input type="radio" name="cust-berlaku" value="30" onchange="updateMasaBerlakuTeks(); simpanDanHitung()"> 30 Hari</label>
+                </div>
+                <div id="print-cust-berlaku" class="print-only" style="font-size: 12.5px; font-weight: normal; margin-top: 2px;">14 Hari</div>
+            </div>
         </div>
     </div>
 
-    <!-- PENGATURAN MARGIN, PAJAK & DISKON (Disembunyikan saat print) -->
     <div class="card no-print" style="background-color: #e0f2fe; border: 1px solid #bae6fd;">
         <h3 style="color: #0369a1; border-color: #bae6fd;">Pengaturan Margin, Pajak & Diskon</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
@@ -195,19 +295,19 @@
 
     <!-- TABEL 1: BAHAN & MATERIAL -->
     <div class="card">
-        <h3>Rincian Bahan & Material</h3>
+        <h3>A. Rincian Bahan & Material</h3>
         <div class="table-responsive">
             <table id="tbl-bahan">
                 <thead>
                     <tr>
                         <th class="no-col">No</th>
                         <th>Uraian</th>
-                        <th>Vol</th>
-                        <th>Satuan</th>
-                        <th class="modal-col">Harga Modal (Satuan)</th>
-                        <th>Harga Jual (Klien)</th>
-                        <th>Subtotal</th>
-                        <th>Aksi</th>
+                        <th style="width: 70px;">Vol</th>
+                        <th style="width: 140px;">Satuan</th>
+                        <th class="modal-col" style="width: 140px;">Harga Modal (Satuan)</th>
+                        <th style="width: 140px;">Harga Satuan / Unit</th>
+                        <th style="width: 130px;">Subtotal</th>
+                        <th style="width: 90px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -218,19 +318,19 @@
 
     <!-- TABEL 2: ALAT KERJA / BAHAN PASANG -->
     <div class="card">
-        <h3>Rincian Bahan Pasang / Alat Kerja</h3>
+        <h3>B. Rincian Bahan Pasang / Alat Kerja</h3>
         <div class="table-responsive">
             <table id="tbl-alat">
                 <thead>
                     <tr>
                         <th class="no-col">No</th>
                         <th>Uraian</th>
-                        <th>Vol</th>
-                        <th>Satuan</th>
-                        <th class="modal-col">Harga Modal (Satuan)</th>
-                        <th>Harga Jual (Klien)</th>
-                        <th>Subtotal</th>
-                        <th>Aksi</th>
+                        <th style="width: 70px;">Vol</th>
+                        <th style="width: 140px;">Satuan</th>
+                        <th class="modal-col" style="width: 140px;">Harga Modal (Satuan)</th>
+                        <th style="width: 140px;">Harga Satuan / Unit</th>
+                        <th style="width: 130px;">Subtotal</th>
+                        <th style="width: 90px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -241,19 +341,19 @@
 
     <!-- TABEL 3: JASA & OPERASIONAL -->
     <div class="card">
-        <h3>Rincian Jasa & Operasional</h3>
+        <h3>C. Jasa & Operasional</h3>
         <div class="table-responsive">
             <table id="tbl-jasa">
                 <thead>
                     <tr>
                         <th class="no-col">No</th>
                         <th>Uraian</th>
-                        <th>Vol</th>
-                        <th>Satuan</th>
-                        <th class="modal-col">Harga Modal (Satuan)</th>
-                        <th>Harga Jual (Klien)</th>
-                        <th>Subtotal</th>
-                        <th>Aksi</th>
+                        <th style="width: 70px;">Vol</th>
+                        <th style="width: 140px;">Satuan</th>
+                        <th class="modal-col" style="width: 140px;">Harga Modal (Satuan)</th>
+                        <th style="width: 140px;">Harga Satuan / Unit</th>
+                        <th style="width: 130px;">Subtotal</th>
+                        <th style="width: 90px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -269,8 +369,18 @@
         <div class="flex-row screen-only"><span>Total Modal Asli (HPP):</span><span id="rek-modal">Rp 0</span></div>
         <div class="flex-row screen-only"><span>Total Markup (Profit + Tak Terduga):</span><span id="rek-markup" style="color:#4ade80;">Rp 0</span></div>
         
-        <div class="flex-row">
-            <span>Subtotal Keseluruhan:</span><span id="print-subtotal">Rp 0</span>
+        <div class="flex-row" style="color: #cbd5e1;">
+            <span>A. Subtotal Bahan & Material:</span><span id="rek-subtotal-bahan">Rp 0</span>
+        </div>
+        <div class="flex-row" style="color: #cbd5e1;">
+            <span>B. Subtotal Bahan Pasang / Alat:</span><span id="rek-subtotal-alat">Rp 0</span>
+        </div>
+        <div class="flex-row" style="color: #cbd5e1;">
+            <span>C. Subtotal Jasa & Operasional:</span><span id="rek-subtotal-jasa">Rp 0</span>
+        </div>
+
+        <div class="flex-row" style="border-top: 1px solid #4b5563; padding-top: 6px; margin-top: 6px; font-weight: bold;">
+            <span>Subtotal Keseluruhan (A + B + C):</span><span id="print-subtotal">Rp 0</span>
         </div>
 
         <div class="flex-row" id="row-diskon" style="color: #f87171;">
@@ -287,31 +397,46 @@
         </div>
     </div>
 
-    <!-- KONDISI & KETENTUAN (T&C) + NOMOR REKENING -->
     <div class="card">
         <h3>Kondisi & Ketentuan (T&C) serta Pembayaran</h3>
         <div class="input-group">
-            <label>Detail Ketentuan (Syarat & Ketentuan)</label>
-            <textarea id="input-tc" rows="5" oninput="simpanDanHitung()">1. Pembayaran DP 50% di awal kontrak.
-2. Pelunasan 50% setelah pekerjaan selesai.
-3. Estimasi waktu pengerjaan sesuai kesepakatan.</textarea>
+            <label style="font-weight: bold;">Detail Ketentuan (Syarat & Ketentuan)</label>
+            <textarea id="input-tc" rows="6" oninput="syncPrintTC(); simpanDanHitung()">1. Pembayaran Termin I (DP) sebesar 50% dibayarkan saat persetujuan kontrak.
+2. Pembayaran Termin II sebesar 30% dibayarkan saat Material on Site (MOS).
+3. Pelunasan akhir sebesar 20% diselesaikan maksimal 2 hari setelah Berita Acara Serah Terima (BAST).
+4. Waktu pengerjaan dilaksanakan sesuai dengan jadwal yang disepakati bersama.
+5. Setiap transaksi pembayaran wajib disertai bukti transfer/pembayaran yang sah.</textarea>
+            <div id="print-tc-content" class="print-tc-view">1. Pembayaran Termin I (DP) sebesar 50% dibayarkan saat persetujuan kontrak.
+2. Pembayaran Termin II sebesar 30% dibayarkan saat Material on Site (MOS).
+3. Pelunasan akhir sebesar 20% diselesaikan maksimal 2 hari setelah Berita Acara Serah Terima (BAST).
+4. Waktu pengerjaan dilaksanakan sesuai dengan jadwal yang disepakati bersama.
+5. Setiap transaksi pembayaran wajib disertai bukti transfer/pembayaran yang sah.</div>
         </div>
-        <div class="input-group">
-            <label>Informasi Rekening Pembayaran</label>
+        <div class="input-group" style="margin-top: 6px;">
+            <label style="font-weight: bold;">Informasi Rekening Pembayaran</label>
             <input type="text" id="input-rekening" value="Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra" oninput="simpanDanHitung()">
         </div>
     </div>
 
-    <!-- Tanda Tangan Khusus PDF -->
-    <div class="footer-pdf print-only print-only-block" style="margin-top: 40px; text-align: right; page-break-inside: avoid;">
-        <div class="signature-area" style="display: inline-block; text-align: center; margin-right: 40px;">
-            <p style="margin-bottom: 70px;">Hormat Kami,<br><b>Velox Design Studio</b></p>
-            <p style="font-weight: bold;">( ___________________ )</p>
+    <!-- Tanda Tangan Berdampingan (Customer & Velox) Khusus PDF/Cetak -->
+    <div class="footer-pdf print-only print-only-block" style="margin-top: 25px; page-break-inside: avoid;">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: flex-end;">
+            <!-- Sisi Pelanggan -->
+            <div style="display: inline-block; text-align: center; width: 230px;">
+                <p style="margin-bottom: 60px; font-size: 12.5px;">Disetujui Oleh,<br><b>Pelanggan / Klien</b></p>
+                <p style="font-weight: normal; font-size: 12.5px; margin-bottom: 0;">( <span id="sig-cust-nama">___________________</span> )</p>
+            </div>
+            
+            <!-- Sisi Velox (Tanggal & Nama Marketing) -->
+            <div style="display: inline-block; text-align: center; width: 230px;">
+                <p id="sig-tgl-lokasi" style="font-size: 12.5px; margin-bottom: 5px; color: #1f2937; font-weight: normal;"></p>
+                <p style="margin-top: 0; margin-bottom: 60px; font-size: 12.5px;">Hormat Kami,<br><b>Velox Design Studio</b></p>
+                <p style="font-weight: normal; font-size: 12.5px; margin-bottom: 0;">( <span id="sig-marketing-nama">___________________</span> )</p>
+            </div>
         </div>
     </div>
 
-    <!-- TOMBOL AKSI DI BAGIAN BAWAH -->
-    <div class="card no-print" style="margin-top: 20px; background-color: #f8fafc;">
+    <div class="card no-print" style="margin-top: 15px; background-color: #f8fafc;">
         <div class="header-action" style="margin-bottom: 0;">
             <div class="btn-group">
                 <button class="btn-reset" onclick="resetData()">Buat RAB Baru</button>
@@ -325,9 +450,6 @@
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
     function getAngka(inputVal) { return parseFloat(inputVal.toString().replace(/[^0-9]/g, '')) || 0; }
 
-    // Escape karakter HTML berbahaya sebelum disisipkan ke innerHTML,
-    // supaya uraian/satuan custom yang mengandung ", <, >, dsb (misal
-    // hasil copy-paste) tidak merusak tampilan atau memicu injeksi HTML.
     function escapeHtml(str) {
         return String(str)
             .replace(/&/g, '&amp;')
@@ -337,15 +459,74 @@
             .replace(/'/g, '&#039;');
     }
 
+    function syncPrintUraian(textareaEl) {
+        const row = textareaEl.closest('tr');
+        if (!row) return;
+        const viewEl = row.querySelector('.print-uraian-view');
+        if (viewEl) {
+            viewEl.textContent = textareaEl.value;
+        }
+    }
+
+    function syncPrintTC() {
+        const tcEl = document.getElementById('input-tc');
+        const printTcEl = document.getElementById('print-tc-content');
+        if (tcEl && printTcEl) {
+            printTcEl.textContent = tcEl.value;
+        }
+    }
+
+    function updateTandaTanganInfo() {
+        const namaPelanggan = document.getElementById('cust-nama').value.trim();
+        const sigNamaEl = document.getElementById('sig-cust-nama');
+        if (sigNamaEl) {
+            sigNamaEl.innerText = namaPelanggan || '___________________';
+        }
+
+        const namaMarketing = document.getElementById('cust-marketing').value.trim();
+        const sigMarketingEl = document.getElementById('sig-marketing-nama');
+        if (sigMarketingEl) {
+            sigMarketingEl.innerText = namaMarketing || '___________________';
+        }
+
+        const tanggalVal = document.getElementById('cust-tanggal').value;
+        let tglFormatted = '';
+        if (tanggalVal) {
+            const d = new Date(tanggalVal);
+            if (!isNaN(d.getTime())) {
+                tglFormatted = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+        }
+        const sigTglEl = document.getElementById('sig-tgl-lokasi');
+        if (sigTglEl) {
+            sigTglEl.innerText = tglFormatted || '';
+        }
+    }
+
+    function getSelectedMasaBerlaku() {
+        const checkedRadio = document.querySelector('input[name="cust-berlaku"]:checked');
+        return checkedRadio ? checkedRadio.value : '14';
+    }
+
+    function setSelectedMasaBerlaku(val) {
+        const targetVal = (val === '30' || val == 30) ? '30' : '14';
+        const radio = document.querySelector(`input[name="cust-berlaku"][value="${targetVal}"]`);
+        if (radio) radio.checked = true;
+        updateMasaBerlakuTeks();
+    }
+
+    function updateMasaBerlakuTeks() {
+        const val = getSelectedMasaBerlaku();
+        const printEl = document.getElementById('print-cust-berlaku');
+        if (printEl) printEl.innerText = `${val} Hari`;
+    }
+
     /* ========================================================= */
-    /* PENYIMPANAN MULTI-PROYEK                                   */
-    /* Setiap proyek disimpan sebagai entri terpisah di localStorage,*/
-    /* sehingga membuat/memuat proyek baru tidak lagi menimpa      */
-    /* proyek lain yang sudah pernah disimpan.                     */
+    /* PENYIMPANAN MULTI-PROYEK (CUSTOM NAMA PROYEK)             */
     /* ========================================================= */
     const KEY_PROJECTS = 'dataRABVeloxProjects_v2';
     const KEY_ACTIVE = 'dataRABVeloxActiveId_v2';
-    const KEY_LEGACY = 'dataRABVeloxV17'; // key versi lama, dipakai untuk migrasi otomatis
+    const KEY_LEGACY = 'dataRABVeloxV17';
 
     function generateId() {
         return 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
@@ -355,20 +536,17 @@
         try {
             return JSON.parse(localStorage.getItem(KEY_PROJECTS)) || [];
         } catch (e) {
-            console.error('Gagal membaca data proyek dari penyimpanan lokal:', e);
+            console.error('Gagal membaca data proyek:', e);
             return [];
         }
     }
 
-    // Mengembalikan true bila berhasil, false bila gagal (mis. storage
-    // penuh atau localStorage diblokir oleh mode private browsing),
-    // supaya pemanggil bisa memberi tahu pengguna.
     function saveProjects(list) {
         try {
             localStorage.setItem(KEY_PROJECTS, JSON.stringify(list));
             return true;
         } catch (e) {
-            console.error('Gagal menyimpan data proyek ke penyimpanan lokal:', e);
+            console.error('Gagal menyimpan data proyek:', e);
             return false;
         }
     }
@@ -377,7 +555,7 @@
         try {
             return localStorage.getItem(KEY_ACTIVE) || null;
         } catch (e) {
-            console.error('Gagal membaca ID proyek aktif:', e);
+            console.error('Gagal membaca ID aktif:', e);
             return null;
         }
     }
@@ -386,25 +564,21 @@
             if (id) localStorage.setItem(KEY_ACTIVE, id);
             else localStorage.removeItem(KEY_ACTIVE);
         } catch (e) {
-            console.error('Gagal menyimpan ID proyek aktif:', e);
+            console.error('Gagal menyimpan ID aktif:', e);
         }
     }
 
-    // Migrasi otomatis: jika masih ada data format lama (1 proyek saja)
-    // dan sistem multi-proyek belum pernah dipakai, pindahkan datanya
-    // menjadi proyek pertama pada sistem baru.
     function migrasiDataLama() {
         try {
             if (localStorage.getItem(KEY_PROJECTS)) return;
             const dataLama = localStorage.getItem(KEY_LEGACY);
             if (!dataLama) return;
             const parsed = JSON.parse(dataLama);
-            const nama = (parsed.pelanggan && parsed.pelanggan.proyek) ? parsed.pelanggan.proyek : 'Proyek Migrasi';
+            const nama = 'Proyek Tersimpan 1';
             const project = { id: generateId(), nama: nama, updatedAt: Date.now(), data: parsed };
             saveProjects([project]);
             setActiveId(project.id);
         } catch (e) {
-            // data lama korup atau localStorage tidak bisa diakses, abaikan migrasi
             console.error('Gagal migrasi data lama:', e);
         }
     }
@@ -437,26 +611,48 @@
         if (!id) return;
         const project = getProjects().find(p => p.id === id);
         if (!project) return;
-        if (!confirm(`Muat proyek "${project.nama}"? Perubahan yang belum tersimpan pada form saat ini akan hilang.`)) return;
+        if (!confirm(`Muat proyek "${project.nama}"? Perubahan yang belum tersimpan pada form saat ini akan ditimpa.`)) return;
         setActiveId(project.id);
         populateForm(project.data);
         renderDaftarProyek();
     }
 
     function simpanProyekBaru() {
-        const namaDefault = document.getElementById('cust-proyek').value || document.getElementById('cust-nama').value || 'Proyek Baru';
-        const nama = prompt('Nama untuk proyek baru ini:', namaDefault);
-        if (nama === null) return; // dibatalkan
-        const namaBersih = nama.trim() || namaDefault;
+        const nama = prompt('Masukkan nama khusus untuk proyek baru ini:', 'Draft Proyek ' + new Date().toLocaleDateString('id-ID'));
+        if (nama === null) return;
+        const namaBersih = nama.trim() || ('Proyek ' + new Date().toLocaleDateString('id-ID'));
+        
         const data = ambilFormSnapshot();
         const list = getProjects();
         const project = { id: generateId(), nama: namaBersih, updatedAt: Date.now(), data: data };
         list.push(project);
         if (!saveProjects(list)) {
-            alert('Gagal menyimpan proyek baru. Penyimpanan lokal browser mungkin penuh atau diblokir.');
+            alert('Gagal menyimpan proyek baru. Penyimpanan browser penuh atau diblokir.');
             return;
         }
         setActiveId(project.id);
+        renderDaftarProyek();
+        tampilkanStatusSimpan(true);
+    }
+
+    function gantiNamaProyekTerpilih() {
+        const id = document.getElementById('project-selector').value;
+        if (!id) return;
+        const list = getProjects();
+        const project = list.find(p => p.id === id);
+        if (!project) return;
+
+        const namaBaru = prompt('Ubah nama proyek tersimpan:', project.nama);
+        if (namaBaru === null) return;
+        const namaBersih = namaBaru.trim();
+        if (!namaBersih) {
+            alert('Nama proyek tidak boleh kosong!');
+            return;
+        }
+
+        project.nama = namaBersih;
+        project.updatedAt = Date.now();
+        saveProjects(list);
         renderDaftarProyek();
     }
 
@@ -468,7 +664,7 @@
         if (!project) return;
         if (!confirm(`Hapus proyek "${project.nama}"? Tindakan ini tidak bisa dibatalkan.`)) return;
         if (!saveProjects(list.filter(p => p.id !== id))) {
-            alert('Gagal menghapus proyek. Penyimpanan lokal browser mungkin penuh atau diblokir.');
+            alert('Gagal menghapus proyek.');
             return;
         }
         if (getActiveId() === id) setActiveId(null);
@@ -482,7 +678,8 @@
                 proyek: document.getElementById('cust-proyek').value,
                 tanggal: document.getElementById('cust-tanggal').value,
                 lokasi: document.getElementById('cust-lokasi').value,
-                berlaku: document.getElementById('cust-berlaku').value
+                marketing: document.getElementById('cust-marketing').value,
+                berlaku: getSelectedMasaBerlaku()
             },
             bahan: ambilDataTabel('tbl-bahan'),
             alat: ambilDataTabel('tbl-alat'),
@@ -518,7 +715,6 @@
         if (tipe === 'percent') {
             input.value = input.value.replace(/[^0-9.]/g, '');
             let v = parseFloat(input.value);
-            // Validasi: diskon persen tidak boleh melebihi 100%
             if (!isNaN(v) && v > 100) {
                 input.value = '100';
             }
@@ -529,24 +725,18 @@
         simpanDanHitung();
     }
 
-    // Validasi: persentase markup (contingency/profit) tidak boleh negatif
-    // (dibiarkan kosong saat sedang dihapus/diketik ulang oleh pengguna;
-    // dianggap 0 otomatis saat kalkulasi lewat parseFloat(...) || 0)
     function validasiPersen(el) {
         if (el.value === '') return;
         let v = parseFloat(el.value);
         if (isNaN(v) || v < 0) el.value = 0;
     }
 
-    // Validasi: kuantitas/volume tidak boleh negatif
-    // (dibiarkan kosong saat sedang dihapus/diketik ulang oleh pengguna)
     function validasiQty(el) {
         if (el.value === '') return;
         let v = parseFloat(el.value);
         if (isNaN(v) || v < 0) el.value = 0;
     }
 
-    // Validasi: beri peringatan visual bila uraian kosong padahal baris punya nilai
     function validasiUraian(el) {
         const row = el.closest('tr');
         const qty = parseFloat(row.querySelector('.qty').value) || 0;
@@ -563,17 +753,14 @@
         hitungSemua();
         simpanKeStorage();
         updateJudulHalaman();
+        updateTandaTanganInfo();
+        syncPrintTC();
     }
 
-    // Mengubah judul dokumen (document.title) mengikuti nama proyek/
-    // pelanggan yang sedang diisi. Browser memakai judul dokumen ini
-    // sebagai nama file bawaan saat "Ekspor PDF / Cetak" (Save as PDF)
-    // maupun saat menyimpan halaman, sehingga file yang dihasilkan
-    // otomatis ikut berganti nama saat nama proyek diubah.
     function updateJudulHalaman() {
         const namaProyek = document.getElementById('cust-proyek').value.trim();
         const namaPelanggan = document.getElementById('cust-nama').value.trim();
-        let judul = 'Kalkulator Penawaran Proyek - Velox Interior';
+        let judul = 'Penawaran Harga - Velox Interior';
         if (namaProyek) {
             judul = `Penawaran - ${namaProyek}`;
         } else if (namaPelanggan) {
@@ -589,24 +776,13 @@
         let project = list.find(p => p.id === activeId);
 
         if (!project) {
-            // Belum ada proyek aktif (mis. setelah "Buat RAB Baru") -> otomatis
-            // buat entri proyek baru begitu pengguna mulai mengisi form,
-            // supaya perilaku auto-save tetap terasa mulus.
-            const namaAwal = data.pelanggan.proyek || data.pelanggan.nama || ('Proyek ' + new Date().toLocaleDateString('id-ID'));
+            const namaAwal = 'Proyek ' + new Date().toLocaleDateString('id-ID') + ' (' + new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ')';
             project = { id: generateId(), nama: namaAwal, updatedAt: Date.now(), data: data };
             list.push(project);
             setActiveId(project.id);
         } else {
             project.data = data;
             project.updatedAt = Date.now();
-            // Nama proyek tersimpan (yang tampil di daftar "Proyek Tersimpan")
-            // ikut mengikuti field Nama Proyek/Nama Pelanggan. Dibiarkan
-            // tidak berubah kalau keduanya kosong, supaya proyek tidak
-            // tiba-tiba tampil tanpa nama di daftar.
-            const namaTerbaru = data.pelanggan.proyek || data.pelanggan.nama;
-            if (namaTerbaru) {
-                project.nama = namaTerbaru;
-            }
         }
 
         const berhasil = saveProjects(list);
@@ -614,10 +790,6 @@
         tampilkanStatusSimpan(berhasil);
     }
 
-    // Menampilkan status simpan di bagian atas form. Saat gagal (mis.
-    // storage penuh atau localStorage diblokir oleh mode private
-    // browsing), pesan ditampilkan lebih lama dan berwarna merah supaya
-    // pengguna sadar perubahannya belum tersimpan.
     function tampilkanStatusSimpan(berhasil) {
         const status = document.getElementById('status-simpan');
         if (berhasil) {
@@ -635,37 +807,37 @@
     function ambilDataTabel(id) {
         const rows = document.querySelectorAll(`#${id} tbody tr`);
         return Array.from(rows).map(row => {
-            const inputs = row.querySelectorAll('input');
+            const uraianEl = row.querySelector('.input-uraian');
+            const qtyEl = row.querySelector('.qty');
             const select = row.querySelector('select');
+            const customSatuanEl = row.querySelector('.custom-satuan');
+            const priceModalEl = row.querySelector('.price-modal');
+
             let satuanVal = '';
             if (select.value === 'Lainnya') {
-                satuanVal = inputs[2] ? inputs[2].value : '';
+                satuanVal = customSatuanEl ? customSatuanEl.value : '';
             } else {
                 satuanVal = select.value;
             }
             return {
-                nama: inputs[0].value,
-                qty: inputs[1].value,
+                nama: uraianEl ? uraianEl.value : '',
+                qty: qtyEl ? qtyEl.value : '1',
                 satuanType: select.value,
-                satuanCustom: inputs[2] ? inputs[2].value : '',
+                satuanCustom: customSatuanEl ? customSatuanEl.value : '',
                 satuan: satuanVal,
-                modal: getAngka(inputs[3].value)
+                modal: priceModalEl ? getAngka(priceModalEl.value) : 0
             };
         });
     }
 
-    /* ========================================================= */
-    /* PEMBUATAN BARIS TABEL                                       */
-    /* buatElemenBaris() hanya MEMBUAT elemen <tr>, tanpa langsung  */
-    /* menyisipkannya ke DOM. Ini memungkinkan pemuatan banyak      */
-    /* baris sekaligus lewat DocumentFragment (lihat muatBarisBanyak)*/
-    /* sehingga hanya terjadi satu kali reflow, bukan satu per baris.*/
-    /* ========================================================= */
     function buatElemenBaris(tipe = 'material', nama = '', qty = '1', satuanType = '', satuanCustom = '', modal = '0') {
         const tr = document.createElement('tr');
-        tr.dataset.tipe = tipe; // dipakai lagi oleh fungsi duplikatBaris()
+        tr.dataset.tipe = tipe;
 
-        let listSatuan = tipe === 'jasa' ? ['m1', 'm2', 'titik', 'trip'] : ['batang', 'lembar', 'pcs', 'tube', 'box', 'unit'];
+        let listSatuan = tipe === 'jasa' 
+            ? ['m1', 'm2', 'titik', 'trip', 'batang', 'lembar'] 
+            : ['batang', 'lembar', 'pcs', 'tube', 'box', 'unit'];
+            
         if (!satuanType) satuanType = tipe === 'jasa' ? 'titik' : 'pcs';
 
         let isCustom = !listSatuan.includes(satuanType) && satuanType !== '';
@@ -679,6 +851,8 @@
                 <option value="m2" ${currentSelectVal === 'm2' ? 'selected' : ''}>m2 (Meter Persegi)</option>
                 <option value="titik" ${currentSelectVal === 'titik' ? 'selected' : ''}>Titik</option>
                 <option value="trip" ${currentSelectVal === 'trip' ? 'selected' : ''}>Trip</option>
+                <option value="batang" ${currentSelectVal === 'batang' ? 'selected' : ''}>Batang</option>
+                <option value="lembar" ${currentSelectVal === 'lembar' ? 'selected' : ''}>Lembar</option>
                 <option value="Lainnya" ${currentSelectVal === 'Lainnya' ? 'selected' : ''}>Lainnya (Isi sendiri)</option>
             `;
         } else {
@@ -701,7 +875,10 @@
                     <button class="btn-move" type="button" data-arah="down" onclick="pindahBaris(this, 'down')" title="Pindah baris ke bawah">&#9660;</button>
                 </div>
             </td>
-            <td><input type="text" class="input-uraian" value="${escapeHtml(nama)}" oninput="validasiUraian(this); simpanDanHitung()" onblur="validasiUraian(this)"></td>
+            <td>
+                <textarea class="input-uraian" rows="1" placeholder="Uraian pekerjaan / bahan..." oninput="syncPrintUraian(this); validasiUraian(this); simpanDanHitung()" onblur="validasiUraian(this)">${escapeHtml(nama)}</textarea>
+                <div class="print-uraian-view">${escapeHtml(nama)}</div>
+            </td>
             <td><input type="number" class="qty" min="0" value="${escapeHtml(qty)}" oninput="validasiQty(this); simpanDanHitung()"></td>
             <td>
                 <select onchange="handleSatuanChange(this)" style="display: ${isCustom ? 'none' : 'block'};">
@@ -722,9 +899,6 @@
         return tr;
     }
 
-    // Menduplikat baris yang sudah ada (uraian, vol, satuan, harga modal)
-    // lalu menyisipkannya tepat di bawah baris asal, supaya item yang
-    // mirip tidak perlu diketik ulang dari nol.
     function duplikatBaris(btn) {
         const row = btn.closest('tr');
         const tipe = row.dataset.tipe || 'material';
@@ -748,7 +922,6 @@
         simpanDanHitung();
     }
 
-    // Memindah satu baris ke atas/bawah di dalam tabel yang sama.
     function pindahBaris(btn, arah) {
         const row = btn.closest('tr');
         if (arah === 'up') {
@@ -762,17 +935,13 @@
         simpanDanHitung();
     }
 
-    // Menambah satu baris tunggal (dipakai oleh tombol "Tambah Bahan/Alat/Jasa")
     function tambahBaris(id, tipe = 'material', nama = '', qty = '1', satuanType = '', satuanCustom = '', modal = '0') {
         const tbody = document.querySelector(`#${id} tbody`);
-        tbody.appendChild(buatElemenBaris(tipe, nama, qty, satuanType, satuanCustom, modal));
+        const row = buatElemenBaris(tipe, nama, qty, satuanType, satuanCustom, modal);
+        tbody.appendChild(row);
         updateNomorUrut();
     }
 
-    // Memuat banyak baris sekaligus (dipakai saat membuka proyek tersimpan).
-    // Semua baris dirakit dulu ke dalam satu DocumentFragment, baru
-    // disisipkan ke tbody dalam SATU operasi DOM -> jauh lebih cepat
-    // dibanding memanggil appendChild berulang kali untuk tiap baris.
     function muatBarisBanyak(id, tipe, dataArray) {
         const tbody = document.querySelector(`#${id} tbody`);
         const fragment = document.createDocumentFragment();
@@ -821,23 +990,11 @@
         simpanDanHitung();
     }
 
-    function hitungSemua() {
-        const pContingency = Math.max(0, parseFloat(document.getElementById('persen-contingency').value) || 0);
-        const pProfit = Math.max(0, parseFloat(document.getElementById('persen-profit').value) || 0);
-        const tipeDiskon = document.getElementById('tipe-diskon').value;
-        const rawDiskonInput = document.getElementById('input-diskon').value;
-        let valDiskonInput = parseFloat(rawDiskonInput.toString().replace(/[^0-9.]/g, '')) || 0;
-        if (tipeDiskon === 'percent' && valDiskonInput > 100) valDiskonInput = 100; // pengaman tambahan
+    function hitungSubtotalTabel(tableId, totalMarkupPersen) {
+        let totalModal = 0;
+        let totalJual = 0;
 
-        const usePajak = document.getElementById('check-pajak').checked;
-        const pPajak = usePajak ? 11 : 0;
-
-        const totalMarkupPersen = pContingency + pProfit;
-
-        let totalModalKeseluruhan = 0;
-        let totalPenawaranKeseluruhan = 0;
-
-        document.querySelectorAll('tbody tr').forEach(row => {
+        document.querySelectorAll(`#${tableId} tbody tr`).forEach(row => {
             const qty = Math.max(0, parseFloat(row.querySelector('.qty').value) || 0);
             const modal = getAngka(row.querySelector('.price-modal').value);
 
@@ -849,12 +1006,39 @@
             const subtotalModal = qty * modal;
             const subtotalJual = qty * hargaJual;
 
-            totalModalKeseluruhan += subtotalModal;
-            totalPenawaranKeseluruhan += subtotalJual;
+            totalModal += subtotalModal;
+            totalJual += subtotalJual;
 
             row.querySelector('.price-jual').value = new Intl.NumberFormat('id-ID').format(hargaJual);
             row.querySelector('.subtotal-text').innerText = formatRupiah(subtotalJual);
         });
+
+        return { totalModal, totalJual };
+    }
+
+    function hitungSemua() {
+        const pContingency = Math.max(0, parseFloat(document.getElementById('persen-contingency').value) || 0);
+        const pProfit = Math.max(0, parseFloat(document.getElementById('persen-profit').value) || 0);
+        const tipeDiskon = document.getElementById('tipe-diskon').value;
+        const rawDiskonInput = document.getElementById('input-diskon').value;
+        let valDiskonInput = parseFloat(rawDiskonInput.toString().replace(/[^0-9.]/g, '')) || 0;
+        if (tipeDiskon === 'percent' && valDiskonInput > 100) valDiskonInput = 100;
+
+        const usePajak = document.getElementById('check-pajak').checked;
+        const pPajak = usePajak ? 11 : 0;
+
+        const totalMarkupPersen = pContingency + pProfit;
+
+        const dataBahan = hitungSubtotalTabel('tbl-bahan', totalMarkupPersen);
+        const dataAlat = hitungSubtotalTabel('tbl-alat', totalMarkupPersen);
+        const dataJasa = hitungSubtotalTabel('tbl-jasa', totalMarkupPersen);
+
+        document.getElementById('rek-subtotal-bahan').innerText = formatRupiah(dataBahan.totalJual);
+        document.getElementById('rek-subtotal-alat').innerText = formatRupiah(dataAlat.totalJual);
+        document.getElementById('rek-subtotal-jasa').innerText = formatRupiah(dataJasa.totalJual);
+
+        const totalModalKeseluruhan = dataBahan.totalModal + dataAlat.totalModal + dataJasa.totalModal;
+        const totalPenawaranKeseluruhan = dataBahan.totalJual + dataAlat.totalJual + dataJasa.totalJual;
 
         let nilaiDiskonRupiah = 0;
         if (tipeDiskon === 'percent') {
@@ -895,15 +1079,14 @@
         document.getElementById('rek-penawaran').innerText = formatRupiah(grandTotal);
     }
 
-    // Mengisi seluruh form dari sebuah objek data proyek (dipakai saat
-    // pertama buka halaman maupun saat memuat proyek tersimpan lain).
     function populateForm(data) {
         if (data.pelanggan) {
             document.getElementById('cust-nama').value = data.pelanggan.nama || '';
             document.getElementById('cust-proyek').value = data.pelanggan.proyek || '';
             document.getElementById('cust-tanggal').value = data.pelanggan.tanggal || '';
             document.getElementById('cust-lokasi').value = data.pelanggan.lokasi || '';
-            document.getElementById('cust-berlaku').value = data.pelanggan.berlaku || '14';
+            document.getElementById('cust-marketing').value = data.pelanggan.marketing || '';
+            setSelectedMasaBerlaku(data.pelanggan.berlaku || '14');
         }
         if (data.pengaturan) {
             document.getElementById('persen-contingency').value = data.pengaturan.contingency !== undefined ? data.pengaturan.contingency : 3;
@@ -934,11 +1117,14 @@
         updateNomorUrut();
         hitungSemua();
         updateJudulHalaman();
+        updateTandaTanganInfo();
+        syncPrintTC();
     }
 
     window.onload = () => {
         migrasiDataLama();
         renderDaftarProyek();
+        updateMasaBerlakuTeks();
 
         const activeId = getActiveId();
         const project = getProjects().find(p => p.id === activeId);
@@ -950,30 +1136,36 @@
             muatBarisBanyak('tbl-alat', 'material', []);
             muatBarisBanyak('tbl-jasa', 'jasa', []);
             document.getElementById('cust-tanggal').valueAsDate = new Date();
+            setSelectedMasaBerlaku('14');
             updateNomorUrut();
             hitungSemua();
             updateJudulHalaman();
+            updateTandaTanganInfo();
+            syncPrintTC();
         }
     };
 
     function resetData() {
-        if (!confirm("Buat proyek RAB baru? Form akan dikosongkan. Pastikan proyek saat ini sudah tersimpan bila masih dibutuhkan.")) return;
+        if (!confirm("Buat proyek RAB baru? Form akan dikosongkan.")) return;
 
-        setActiveId(null); // proyek baru akan otomatis tersimpan terpisah begitu mulai diisi
+        setActiveId(null);
 
         document.getElementById('cust-nama').value = '';
         document.getElementById('cust-proyek').value = '';
         document.getElementById('cust-tanggal').valueAsDate = new Date();
         document.getElementById('cust-lokasi').value = '';
-        document.getElementById('cust-berlaku').value = '14';
+        document.getElementById('cust-marketing').value = '';
+        setSelectedMasaBerlaku('14');
         document.getElementById('persen-contingency').value = 3;
         document.getElementById('persen-profit').value = 15;
         document.getElementById('tipe-diskon').value = 'rp';
         document.getElementById('input-diskon').value = '0';
         document.getElementById('check-pajak').checked = true;
-        document.getElementById('input-tc').value = `1. Pembayaran DP 50% di awal kontrak.
-2. Pelunasan 50% setelah pekerjaan selesai.
-3. Estimasi waktu pengerjaan sesuai kesepakatan.`;
+        document.getElementById('input-tc').value = `1. Pembayaran Termin I (DP) sebesar 50% dibayarkan saat persetujuan kontrak.
+2. Pembayaran Termin II sebesar 30% dibayarkan saat Material on Site (MOS).
+3. Pelunasan akhir sebesar 20% diselesaikan maksimal 2 hari setelah Berita Acara Serah Terima (BAST).
+4. Waktu pengerjaan dilaksanakan sesuai dengan jadwal yang disepakati bersama.
+5. Setiap transaksi pembayaran wajib disertai bukti transfer/pembayaran yang sah.`;
         document.getElementById('input-rekening').value = 'Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra';
 
         ['tbl-bahan', 'tbl-alat', 'tbl-jasa'].forEach(id => {
@@ -987,6 +1179,8 @@
         hitungSemua();
         renderDaftarProyek();
         updateJudulHalaman();
+        updateTandaTanganInfo();
+        syncPrintTC();
     }
 </script>
 </body>
