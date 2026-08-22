@@ -40,7 +40,6 @@
         .card { background: #ffffff; border-radius: 8px; padding: 12px 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
         h3 { margin-top: 0; color: #111827; font-size: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 10px; }
         
-        /* Grid Data Pelanggan */
         .grid-customer { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
         .input-group { margin-bottom: 4px; }
         .input-group label { font-size: 12.5px; font-weight: bold; color: #1f2937; display: block; margin-bottom: 2px; }
@@ -52,7 +51,6 @@
         .table-responsive { overflow-x: auto; margin-bottom: 8px; border: 1px solid #e5e7eb; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
         
-        /* Head Table Bold */
         th { 
             background: #f9fafb; 
             font-weight: bold !important; 
@@ -64,7 +62,6 @@
             vertical-align: middle; 
         }
         
-        /* Isi Tabel Normal */
         td { 
             padding: 8px 10px; 
             text-align: left; 
@@ -128,15 +125,23 @@
         .summary-card h3 { color: #60a5fa; border-color: #374151; }
         .flex-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px; }
         
-        /* Pengaturan Garis Khusus Rekapitulasi */
-        .border-top-thin { border-top: 1px solid #4b5563; padding-top: 6px; margin-top: 6px; font-weight: bold; }
-        .border-bottom-thin { border-bottom: 1px solid #4b5563; padding-bottom: 6px; margin-bottom: 6px; }
-        .total-row { border-bottom: 2px dashed #4b5563; padding-bottom: 12px; margin-bottom: 12px; font-size: 17px; font-weight: bold; color: #34d399; }
+        .border-top-thin { border-top: 1px solid #4b5563; padding-top: 12px; margin-top: 12px; }
+        .border-bottom-thin { border-bottom: 1px solid #4b5563; padding-bottom: 10px; margin-bottom: 10px; }
+        
+        /* SPASI GARIS BAWAH (Revisi 5) */
+        .total-row { 
+            border-bottom: 2px dashed #4b5563; 
+            padding-bottom: 15px; 
+            margin-bottom: 15px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            color: #34d399; 
+        }
         
         #status-simpan { font-size: 12px; color: #10b981; font-weight: bold; display: none; width: 100%; text-align: center; margin-bottom: 8px; }
         .print-only { display: none; }
+        .print-only-cell { display: none; }
 
-        /* KOP SURAT KHUSUS CETAK / PDF */
         .kop-surat {
             display: none;
             flex-direction: row;
@@ -151,21 +156,20 @@
         .kop-info h2 { margin: 0; color: #111827; font-size: 17px; }
 
         @media print {
-            @page {
-                size: A4;
-                /* REVISI 1: Margin 0 menghapus secara paksa default header/footer text dari browser (seperti url, tanggal otomatis) */
-                margin: 0mm; 
-            }
-
+            @page { margin: 0mm; }
             body { 
                 background-color: #ffffff; 
                 color: #000; 
-                padding: 15mm 15mm 20mm 15mm !important; /* Kembalikan padding fisik kertas */
+                padding: 15mm 15mm 20mm 15mm !important; 
             }
             .container { max-width: 100%; width: 100%; margin: 0; }
+            
             .no-print, .btn-add, .btn-delete, .btn-reset, .btn-print, .btn-move, .btn-duplikat, #status-simpan, .header-action, .screen-only { display: none !important; }
+            
             .print-only { display: flex !important; }
             .print-only-block { display: block !important; }
+            .print-only-cell { display: table-cell !important; }
+            
             .kop-surat { display: flex !important; }
             th.modal-col, td.modal-col { display: none !important; }
             th:last-child, td:last-child { display: none !important; }
@@ -175,14 +179,12 @@
             .summary-card h3 { display: none; }
             
             table { min-width: 100%; border: 1px solid #000; margin-bottom: 8px; }
-            /* REVISI 3: Tambahkan background color abu-abu muda di tabel */
             th { border: 1px solid #000; padding: 6px 8px; font-size: 12.5px; font-weight: bold !important; color: #000 !important; background-color: #e5e7eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             td { border: 1px solid #000; padding: 6px 8px; font-size: 12.5px; font-weight: normal !important; color: #000 !important; }
             .table-responsive { border: none !important; margin-bottom: 4px !important; }
             
             .subtotal-text { font-weight: normal !important; padding: 0; }
             
-            /* REVISI 2: Judul Penawaran Harga ditengah & garis atas bawah */
             .main-title-header { text-align: center; border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; padding: 10px 0; margin-bottom: 15px; }
             .main-title-header h1 { font-size: 18px; margin: 0; }
             h3 { border-bottom: none !important; padding-bottom: 0 !important; margin-bottom: 6px !important; font-size: 13.5px; font-weight: bold; }
@@ -190,30 +192,33 @@
             .grid-customer { gap: 4px 15px; }
             .input-group label { font-size: 12px; font-weight: bold !important; color: #000 !important; }
             .berlaku-options { display: none !important; }
-
             .field-marketing-group { display: none !important; }
 
             input, select { border: none; background: transparent !important; padding: 0; color: #000; font-size: 12.5px; pointer-events: none; resize: none; appearance: none; font-weight: normal !important; }
             
             #print-cust-berlaku { font-weight: normal !important; color: #000; }
-
             textarea.input-uraian { display: none !important; }
             .print-uraian-view { display: block !important; color: #000; font-weight: normal !important; }
-
             #input-tc { display: none !important; }
             .print-tc-view { display: block !important; }
 
-            /* REVISI 6: Warna text hitam kecuali diskon */
             * { color: #000; }
-            .summary-item-text { color: #000 !important; }
+            .summary-item-text, .rincian-subtotal span { color: #000 !important; }
             #row-diskon span { color: #dc2626 !important; }
 
-            /* REVISI 7, 8, 9, 10, 11: Format Garis untuk Summary */
             .border-top-thin { border-top: 1px solid #000 !important; }
             .border-bottom-thin { border-bottom: 1px solid #000 !important; }
-            .total-row { border-bottom: 3px solid #000 !important; color: #000 !important; font-size: 16px; font-weight: bold !important; }
+            
+            /* SPASI GARIS BAWAH PRINT (Revisi 5) */
+            .total-row { 
+                border-bottom: 3px solid #000 !important; 
+                color: #000 !important; 
+                font-size: 16px; 
+                font-weight: bold !important; 
+                padding-bottom: 15px !important; 
+                margin-bottom: 20px !important; 
+            }
 
-            /* REVISI 14: Garis bawah Rekening */
             .rekening-print-line { border-bottom: 1px solid #000 !important; display: block; border-radius: 0; padding-bottom: 2px !important; }
         }
     </style>
@@ -230,7 +235,6 @@
         </div>
     </div>
 
-    <!-- REVISI 2: Judul -->
     <div class="main-title-header">
         <h1>PENAWARAN HARGA</h1>
     </div>
@@ -323,12 +327,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 4: Baris Total Harga di Tabel -->
+                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
-                        <td class="modal-col"></td>
-                        <td style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
                         <td style="font-weight: bold;" id="foot-total-bahan">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
@@ -356,12 +359,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 4: Baris Total Harga di Tabel -->
+                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
-                        <td class="modal-col"></td>
-                        <td style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
                         <td style="font-weight: bold;" id="foot-total-alat">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
@@ -373,7 +375,6 @@
 
     <!-- TABEL 3: JASA & OPERASIONAL -->
     <div class="card">
-        <!-- REVISI 5: Tambah kata Rincian -->
         <h3>C. Rincian Jasa & Operasional</h3>
         <div class="table-responsive">
             <table id="tbl-jasa">
@@ -390,12 +391,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 4: Baris Total Harga di Tabel -->
+                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
-                        <td class="modal-col"></td>
-                        <td style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
                         <td style="font-weight: bold;" id="foot-total-jasa">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
@@ -412,42 +412,41 @@
         <div class="flex-row screen-only"><span>Total Modal Asli (HPP):</span><span id="rek-modal">Rp 0</span></div>
         <div class="flex-row screen-only"><span>Total Markup (Profit + Tak Terduga):</span><span id="rek-markup" style="color:#4ade80;">Rp 0</span></div>
         
-        <!-- REVISI 8 & 9: Pengelompokkan Subtotal (Bahan + Alat + Jasa) ditaruh langsung disini di atas diskon -->
-        <div class="flex-row summary-item-text" style="color: #cbd5e1;">
-            <span>A. Subtotal Bahan & Material:</span><span id="rek-subtotal-bahan">Rp 0</span>
-        </div>
-        <div class="flex-row summary-item-text" style="color: #cbd5e1;">
-            <span>B. Subtotal Bahan Pasang / Alat:</span><span id="rek-subtotal-alat">Rp 0</span>
-        </div>
-        <div class="flex-row summary-item-text" style="color: #cbd5e1;">
-            <span>C. Subtotal Jasa & Operasional:</span><span id="rek-subtotal-jasa">Rp 0</span>
+        <!-- REVISI 2 & 3 & 4: Hierarki Rincian Subtotal yang baru -->
+        <div class="border-top-thin summary-item-text">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">Perhitungan Subtotal</div>
+            
+            <div class="flex-row summary-item-text rincian-subtotal" style="color: #cbd5e1; margin-bottom: 4px;">
+                <span>A. Subtotal Bahan & Material:</span><span id="rek-subtotal-bahan">Rp 0</span>
+            </div>
+            <div class="flex-row summary-item-text rincian-subtotal" style="color: #cbd5e1; margin-bottom: 4px;">
+                <span>B. Subtotal Bahan Pasang / Alat:</span><span id="rek-subtotal-alat">Rp 0</span>
+            </div>
+            <div class="flex-row summary-item-text rincian-subtotal" style="color: #cbd5e1; margin-bottom: 12px;">
+                <span>C. Subtotal Jasa & Operasional:</span><span id="rek-subtotal-jasa">Rp 0</span>
+            </div>
+
+            <div class="flex-row summary-item-text" style="font-weight: bold;">
+                <span>Subtotal Keseluruhan (A + B + C):</span><span id="print-subtotal">Rp 0</span>
+            </div>
         </div>
 
-        <!-- REVISI 8: Ubah Nama dan REVISI 7: Tambahkan Garis Pemisah (border-top) tipis seperti dibawah C -->
-        <div class="flex-row border-top-thin summary-item-text">
-            <span>Perhitungan Subtotal (A + B + C):</span><span id="print-subtotal">Rp 0</span>
-        </div>
-
-        <div class="flex-row" id="row-diskon" style="color: #f87171;">
+        <div class="flex-row" id="row-diskon" style="color: #f87171; margin-top: 6px;">
             <span id="label-diskon-teks">Diskon Proyek:</span><span id="rek-diskon">- Rp 0</span>
         </div>
 
-        <!-- REVISI 10: Garis pemisah di bawah pajak PPN jadi tipis -->
-        <div class="flex-row border-bottom-thin summary-item-text" id="row-pajak">
+        <div class="flex-row border-bottom-thin summary-item-text" id="row-pajak" style="margin-top: 6px;">
             <span>Pajak PPN (11%):</span><span id="rek-pajak">Rp 0</span>
         </div>
         
-        <!-- REVISI 11: Garis pemisah dibawah TOTAL PENAWARAN tebal -->
-        <div class="flex-row total-row">
+        <div class="flex-row total-row" style="margin-top: 12px;">
             <span>TOTAL PENAWARAN HARGA:</span>
             <span id="rek-penawaran">Rp 0</span>
         </div>
     </div>
 
-    <!-- REVISI 12: Ubah text judul T&C -->
     <div class="card">
         <h3>Termin Pembayaran, Syarat & Ketentuan</h3>
-        <!-- REVISI 13: Hapus label text -->
         <div class="input-group">
             <textarea id="input-tc" rows="6" oninput="syncPrintTC(); simpanDanHitung()">1. Pembayaran Termin I (DP) sebesar 50% dibayarkan saat persetujuan kontrak.
 2. Pembayaran Termin II sebesar 30% dibayarkan saat Material on Site (MOS).
@@ -462,7 +461,6 @@
         </div>
         <div class="input-group" style="margin-top: 10px;">
             <label style="font-weight: bold;">Informasi Rekening Pembayaran</label>
-            <!-- REVISI 14: Tambahkan garis bawah saat print pada class rekening-print-line -->
             <input type="text" id="input-rekening" class="rekening-print-line" value="Rekening Bank BCA: 751-0938881 a.n. Christian Adiputra" oninput="simpanDanHitung()">
         </div>
     </div>
@@ -1067,7 +1065,6 @@
         const dataAlat = hitungSubtotalTabel('tbl-alat', totalMarkupPersen);
         const dataJasa = hitungSubtotalTabel('tbl-jasa', totalMarkupPersen);
 
-        // Update nilai Total di footer masing-masing tabel (REVISI 4)
         document.getElementById('foot-total-bahan').innerText = formatRupiah(dataBahan.totalJual);
         document.getElementById('foot-total-alat').innerText = formatRupiah(dataAlat.totalJual);
         document.getElementById('foot-total-jasa').innerText = formatRupiah(dataJasa.totalJual);
