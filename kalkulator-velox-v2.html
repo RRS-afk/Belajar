@@ -128,7 +128,6 @@
         .border-top-thin { border-top: 1px solid #4b5563; padding-top: 12px; margin-top: 12px; }
         .border-bottom-thin { border-bottom: 1px solid #4b5563; padding-bottom: 10px; margin-bottom: 10px; }
         
-        /* SPASI GARIS BAWAH (Revisi 5) */
         .total-row { 
             border-bottom: 2px dashed #4b5563; 
             padding-bottom: 15px; 
@@ -209,7 +208,6 @@
             .border-top-thin { border-top: 1px solid #000 !important; }
             .border-bottom-thin { border-bottom: 1px solid #000 !important; }
             
-            /* SPASI GARIS BAWAH PRINT (Revisi 5) */
             .total-row { 
                 border-bottom: 3px solid #000 !important; 
                 color: #000 !important; 
@@ -219,7 +217,8 @@
                 margin-bottom: 20px !important; 
             }
 
-            .rekening-print-line { border-bottom: 1px solid #000 !important; display: block; border-radius: 0; padding-bottom: 2px !important; }
+            /* Penambahan Padding untuk jarak teks rekening dengan garis bawah */
+            .rekening-print-line { border-bottom: 1px solid #000 !important; display: block; border-radius: 0; padding-bottom: 10px !important; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -327,12 +326,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td style="font-weight: bold;" id="foot-total-bahan">Rp 0</td>
+                        <td colspan="6" class="screen-only" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td style="text-align: right; font-weight: bold;" id="foot-total-bahan">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
                 </tfoot>
@@ -359,12 +357,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td style="font-weight: bold;" id="foot-total-alat">Rp 0</td>
+                        <td colspan="6" class="screen-only" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td style="text-align: right; font-weight: bold;" id="foot-total-alat">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
                 </tfoot>
@@ -391,12 +388,11 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <!-- REVISI 1: Kolom merged / gabung dan bold -->
                 <tfoot>
                     <tr>
-                        <td colspan="6" class="screen-only" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td colspan="5" class="print-only-cell" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td style="font-weight: bold;" id="foot-total-jasa">Rp 0</td>
+                        <td colspan="6" class="screen-only" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td colspan="5" class="print-only-cell" style="text-align: left; font-weight: bold;">Total Harga:</td>
+                        <td style="text-align: right; font-weight: bold;" id="foot-total-jasa">Rp 0</td>
                         <td class="no-print"></td>
                     </tr>
                 </tfoot>
@@ -412,7 +408,6 @@
         <div class="flex-row screen-only"><span>Total Modal Asli (HPP):</span><span id="rek-modal">Rp 0</span></div>
         <div class="flex-row screen-only"><span>Total Markup (Profit + Tak Terduga):</span><span id="rek-markup" style="color:#4ade80;">Rp 0</span></div>
         
-        <!-- REVISI 2 & 3 & 4: Hierarki Rincian Subtotal yang baru -->
         <div class="border-top-thin summary-item-text">
             <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">Perhitungan Subtotal</div>
             
